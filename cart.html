@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cart — 13AM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Noto+Serif+SC:wght@300;400;500;700&family=Sacramento&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0a;
+  --bg-soft:#121010;
+  --text:#e8e0d8;
+  --text-dim:#6a655f;
+  --text-faint:#3a3530;
+  --line:#1f1c18;
+  --accent:#8b0000;
+  --serif:'Fraunces','Noto Serif SC',serif;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--serif);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--accent);color:var(--bg)}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+
+/* 顶部返回条 */
+.topbar{
+  position:fixed;
+  top:0;left:0;right:0;
+  z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 48px;
+  height:34px;
+  background:rgba(180,180,180,0.05);
+  backdrop-filter:blur(12px) saturate(1.2);
+  -webkit-backdrop-filter:blur(12px) saturate(1.2);
+  overflow:visible;
+}
+.back-btn{
+  position:absolute;
+  left:48px;
+  top:50%;
+  transform:translateY(-50%);
+  background:none;
+  border:none;
+  color:var(--text-dim);
+  font-family:var(--serif);
+  font-size:13px;
+  letter-spacing:0.1em;
+  cursor:pointer;
+  padding:6px 0;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  transition:color 0.3s ease;
+}
+.back-btn:hover{color:var(--text)}
+.back-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.topbar-title{
+  position:absolute;
+  right:48px;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:13px;
+  letter-spacing:0.25em;
+  color:var(--text-dim);
+  font-weight:300;
+}
+
+.topbar-logo{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  cursor:pointer;
+}
+.topbar-logo img{
+  height:46px;
+  width:auto;
+  opacity:0.85;
+  transition:all 0.4s cubic-bezier(0.2,0.8,0.2,1);
+}
+.topbar-logo:hover img{
+  opacity:1;
+  height:58px;
+}
+
+/* 主体 */
+.wrap{
+  max-width:960px;
+  margin:0 auto;
+  padding:140px 48px 80px;
+}
+
+.page-label{
+  display:flex;
+  align-items:baseline;
+  gap:16px;
+  margin-bottom:60px;
+  padding-bottom:20px;
+  border-bottom:1px solid var(--line);
+}
+.page-label .num{
+  font-size:12px;
+  color:var(--text-faint);
+  letter-spacing:0.1em;
+}
+.page-label .title{
+  font-size:32px;
+  font-weight:400;
+  letter-spacing:0.04em;
+}
+.page-label .desc{
+  font-size:12px;
+  color:var(--text-dim);
+  letter-spacing:0.1em;
+  margin-left:auto;
+  font-style:italic;
+}
+
+/* 空状态 */
+.empty{
+  text-align:center;
+  padding:120px 24px;
+}
+.empty .icon{
+  width:60px;
+  height:60px;
+  margin:0 auto 32px;
+  opacity:0.25;
+  stroke:var(--text);
+  fill:none;
+  stroke-width:1;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.empty .msg{
+  font-size:18px;
+  font-style:italic;
+  color:var(--text-dim);
+  margin-bottom:8px;
+}
+.empty .sub{
+  font-size:13px;
+  color:var(--text-faint);
+  letter-spacing:0.1em;
+  margin-bottom:40px;
+}
+.empty a{
+  display:inline-block;
+  padding:12px 32px;
+  border:1px solid var(--line);
+  color:var(--text);
+  text-decoration:none;
+  font-size:13px;
+  letter-spacing:0.15em;
+  transition:all 0.3s ease;
+}
+.empty a:hover{
+  border-color:var(--accent);
+  color:var(--accent);
+}
+
+/* 商品列表（占位结构） */
+.cart-list{
+  display:none;
+  flex-direction:column;
+  gap:0;
+}
+.cart-item{
+  display:grid;
+  grid-template-columns:80px 1fr auto auto;
+  gap:24px;
+  align-items:center;
+  padding:24px 0;
+  border-bottom:1px solid var(--line);
+}
+.cart-item img{
+  width:80px;
+  height:100px;
+  object-fit:cover;
+  filter:brightness(0.9);
+}
+.cart-item .name{
+  font-size:16px;
+  color:var(--text);
+}
+.cart-item .tag{
+  font-size:11px;
+  color:var(--accent);
+  letter-spacing:0.2em;
+  margin-top:4px;
+  opacity:0.7;
+}
+.cart-item .qty{
+  font-size:13px;
+  color:var(--text-dim);
+  font-feature-settings:"tnum";
+}
+.cart-item .price{
+  font-size:15px;
+  color:var(--text);
+  font-feature-settings:"tnum";
+}
+.cart-item .remove{
+  background:none;
+  border:none;
+  color:var(--text-faint);
+  cursor:pointer;
+  font-family:var(--serif);
+  font-size:12px;
+  transition:color 0.3s ease;
+}
+.cart-item .remove:hover{color:var(--accent)}
+
+/* 合计 */
+.cart-total{
+  display:none;
+  margin-top:40px;
+  padding-top:24px;
+  border-top:1px solid var(--line);
+  text-align:right;
+}
+.cart-total .label{
+  font-size:13px;
+  color:var(--text-dim);
+  letter-spacing:0.15em;
+  margin-right:16px;
+}
+.cart-total .amount{
+  font-size:24px;
+  color:var(--text);
+  font-feature-settings:"tnum";
+}
+.checkout-btn{
+  display:block;
+  margin:32px 0 0 auto;
+  padding:14px 40px;
+  background:var(--accent);
+  color:var(--bg);
+  border:none;
+  font-family:var(--serif);
+  font-size:13px;
+  letter-spacing:0.2em;
+  cursor:pointer;
+  transition:all 0.3s ease;
+}
+.checkout-btn:hover{
+  background:var(--text);
+}
+
+@media (max-width:768px){
+  .topbar{padding:0 24px}
+  .back-btn{left:24px}
+  .wrap{padding:100px 24px 60px}
+  .cart-item{grid-template-columns:60px 1fr;gap:16px}
+  .cart-item .qty,.cart-item .price,.cart-item .remove{grid-column:2}
+}
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <button class="back-btn" onclick="history.back()">
+    <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+    BACK
+  </button>
+  <div class="topbar-logo" onclick="location.href='index.html'">
+    <img src="assets/logo-13am.png" alt="13AM">
+  </div>
+  <span class="topbar-title">CART</span>
+</nav>
+
+<div class="wrap">
+  <div class="page-label">
+    <span class="title">Your Cart</span>
+    <span class="desc" id="countLabel">empty</span>
+  </div>
+
+  <!-- 空状态 -->
+  <div class="empty" id="emptyState">
+    <svg class="icon" viewBox="0 0 24 24"><path d="M3 4h2l2.5 12h11l2-8h-13"/><circle cx="9" cy="20" r="1.2"/><circle cx="17" cy="20" r="1.2"/></svg>
+    <div class="msg">Nothing here yet.</div>
+    <div class="sub">YOUR CART IS WAITING.</div>
+    <a href="index.html#product">← BACK TO SHOP</a>
+  </div>
+
+  <!-- 商品列表（隐藏，加入商品后显示） -->
+  <div class="cart-list" id="cartList"></div>
+
+  <!-- 合计 -->
+  <div class="cart-total" id="cartTotal">
+    <span class="label">SUBTOTAL</span>
+    <span class="amount" id="totalAmount">¥ 0</span>
+    <button class="checkout-btn" onclick="checkout()">CHECKOUT</button>
+  </div>
+</div>
+
+<script>
+// 购物车数据（暂存 localStorage）
+const CART_KEY = '13am_cart';
+let cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+
+// 商品信息映射（实际项目可从后端获取）
+const products = {
+  fire:  {name:'FIRE',  tag:'element series', price:0, img:'assets/images/Fire.jpg'},
+  earth: {name:'EARTH', tag:'element series', price:0, img:'assets/images/earth.jpg'},
+  water: {name:'WATER', tag:'element series', price:0, img:'assets/images/water.jpg'},
+  wind:  {name:'WIND',  tag:'element series', price:0, img:'assets/images/wind.jpg'}
+};
+
+function render(){
+  const list = document.getElementById('cartList');
+  const total = document.getElementById('cartTotal');
+  const empty = document.getElementById('emptyState');
+  const label = document.getElementById('countLabel');
+
+  if(cart.length === 0){
+    list.style.display = 'none';
+    total.style.display = 'none';
+    empty.style.display = 'block';
+    label.textContent = 'empty';
+    return;
+  }
+
+  empty.style.display = 'none';
+  list.style.display = 'flex';
+  total.style.display = 'block';
+  label.textContent = cart.length + (cart.length === 1 ? ' item' : ' items');
+
+  list.innerHTML = cart.map((item, idx)=>{
+    const p = products[item.id];
+    if(!p) return '';
+    return `<div class="cart-item">
+      <img src="${p.img}" alt="">
+      <div>
+        <div class="name">${p.name}</div>
+        <div class="tag">— ${p.tag}</div>
+      </div>
+      <div class="qty">× ${item.qty}</div>
+      <div class="price">¥ TBA</div>
+      <button class="remove" onclick="removeItem(${idx})">REMOVE</button>
+    </div>`;
+  }).join('');
+}
+
+function removeItem(idx){
+  cart.splice(idx, 1);
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  render();
+}
+
+function checkout(){
+  alert('Checkout flow — coming soon.');
+}
+
+// 暴露给主页用
+window.addToCart = function(id){
+  const existing = cart.find(i => i.id === id);
+  if(existing) existing.qty += 1;
+  else cart.push({id, qty:1});
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+};
+
+render();
+</script>
+</body>
+</html>

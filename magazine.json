@@ -1,0 +1,83 @@
+{
+  "issue": "01",
+  "date": "2025",
+  "spreads": [
+    {
+      "left": {
+        "type": "image",
+        "src": "assets/images/untitled01.jpg",
+        "alt": "untitled 01"
+      },
+      "right": {
+        "type": "text",
+        "content": "WE ARE\nDEVILS,\nWE ARE\n「ONE」。",
+        "style": "manifesto",
+        "annotation": "— NEE, 2025"
+      }
+    },
+    {
+      "left": {
+        "type": "image",
+        "src": "assets/images/Fire.jpg",
+        "alt": "element 01 — fire"
+      },
+      "right": {
+        "type": "text",
+        "content": "ELEMENT 01\n— FIRE —\n\nA flame\nthat doesn't\nask permission.",
+        "style": "manifesto",
+        "annotation": "element series"
+      }
+    },
+    {
+      "left": {
+        "type": "image",
+        "src": "assets/images/earth.jpg",
+        "alt": "element 02 — earth"
+      },
+      "right": {
+        "type": "text",
+        "content": "ELEMENT 02\n— EARTH —\n\nRooted deep.\nUnshakable\nwhere it stands.",
+        "style": "manifesto",
+        "annotation": "element series"
+      }
+    },
+    {
+      "left": {
+        "type": "image",
+        "src": "assets/images/water.jpg",
+        "alt": "element 03 — water"
+      },
+      "right": {
+        "type": "image",
+        "src": "assets/images/wind.jpg",
+        "alt": "element 04 — wind"
+      }
+    },
+    {
+      "left": {
+        "type": "image",
+        "src": "assets/images/untitled04.jpg",
+        "alt": "untitled 04"
+      },
+      "right": {
+        "type": "text",
+        "content": "Dress freely,\ndance with\nthe chaos.",
+        "style": "manifesto",
+        "annotation": "follow the guts"
+      }
+    },
+    {
+      "left": {
+        "type": "image",
+        "src": "assets/images/untitled07.jpg",
+        "alt": "untitled 07"
+      },
+      "right": {
+        "type": "enter",
+        "content": "see more\nof 13am",
+        "hint": "→ ENTER",
+        "target": "art"
+      }
+    }
+  ]
+}

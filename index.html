@@ -1,0 +1,1765 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>13AM — 一时即当下</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Noto+Serif+SC:wght@300;400;500;700&family=Sacramento&display=swap" rel="stylesheet">
+<style>
+/* ========== 基础 ========== */
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --bg:#0a0a0a;
+  --bg-soft:#121010;
+  --text:#e8e0d8;
+  --text-dim:#6a655f;
+  --text-faint:#3a3530;
+  --line:#1f1c18;
+  --accent:#8b0000;
+  --serif:'Fraunces','Noto Serif SC',serif;
+  --serif-cn:'Noto Serif SC','Fraunces',serif;
+  --sign:'Sacramento',cursive;
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  font-family:var(--serif);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  font-feature-settings:"ss01","ss02";
+}
+
+::selection{background:var(--accent);color:var(--bg)}
+
+/* 滚动条 */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--text-faint)}
+
+/* ========== 导航 ========== */
+.nav{
+  position:fixed;
+  top:0;left:0;right:0;
+  z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 48px;
+  height:34px;
+  background:rgba(180,180,180,0.05);
+  backdrop-filter:blur(12px) saturate(1.2);
+  -webkit-backdrop-filter:blur(12px) saturate(1.2);
+  overflow:visible;
+}
+
+.nav-menu{
+  position:absolute;
+  left:48px;
+  top:50%;
+  transform:translateY(-50%);
+}
+
+.menu-icon{
+  width:24px;
+  height:18px;
+  background:none;
+  border:none;
+  cursor:pointer;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  align-items:flex-start;
+}
+
+.menu-icon span{
+  display:block;
+  height:1px;
+  background:var(--text-dim);
+  transition:all 0.4s cubic-bezier(0.2,0.8,0.2,1);
+}
+
+.menu-icon span:nth-child(1){width:24px}
+.menu-icon span:nth-child(2){width:16px}
+.menu-icon span:nth-child(3){width:24px}
+
+.menu-icon:hover span{background:var(--text);width:24px}
+
+.nav-menu.open .menu-icon span:nth-child(1){
+  transform:translateY(8.5px) rotate(45deg);
+  width:24px;
+}
+.nav-menu.open .menu-icon span:nth-child(2){
+  opacity:0;
+}
+.nav-menu.open .menu-icon span:nth-child(3){
+  transform:translateY(-8.5px) rotate(-45deg);
+  width:24px;
+}
+
+.nav-links{
+  position:absolute;
+  top:calc(100% + 18px);
+  left:-48px;
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  padding:20px 48px 20px 48px;
+  background:rgba(180,180,180,0.05);
+  backdrop-filter:blur(12px) saturate(1.2);
+  -webkit-backdrop-filter:blur(12px) saturate(1.2);
+  opacity:0;
+  visibility:hidden;
+  transform:translateY(-8px);
+  transition:opacity 0.3s ease,transform 0.3s ease,visibility 0.3s;
+  min-width:200px;
+}
+
+.nav-menu.open .nav-links{
+  opacity:1;
+  visibility:visible;
+  transform:translateY(0);
+}
+
+.nav-links a{
+  font-size:17px;
+  font-weight:300;
+  letter-spacing:0.12em;
+  color:var(--text-dim);
+  text-decoration:none;
+  cursor:pointer;
+  position:relative;
+  padding:9px 0;
+  transition:color 0.3s ease;
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+}
+
+.nav-links a .num{
+  color:var(--text-faint);
+  font-feature-settings:"tnum";
+  font-size:11px;
+}
+
+.nav-links a:hover{color:var(--text)}
+.nav-links a:hover .num{color:var(--accent)}
+
+.nav-links a.active{color:var(--text)}
+.nav-links a.active .num{color:var(--accent)}
+
+.nav-logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  cursor:pointer;
+  transition:opacity 0.3s ease;
+  margin-left:50px;
+}
+
+.nav-logo img{
+  height:46px;
+  width:auto;
+  opacity:0.85;
+  transition:opacity 0.4s cubic-bezier(0.2,0.8,0.2,1),transform 0.4s cubic-bezier(0.2,0.8,0.2,1);
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  will-change:transform,opacity;
+}
+
+.nav-logo:hover img{
+  opacity:1;
+  transform:scale(1.26);
+}
+
+/* 右侧图标 */
+.nav-actions{
+  position:absolute;
+  right:48px;
+  top:50%;
+  transform:translateY(-50%);
+  display:flex;
+  gap:24px;
+  align-items:center;
+}
+
+.nav-icon{
+  background:none;
+  border:none;
+  cursor:pointer;
+  color:var(--text-dim);
+  padding:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:color 0.3s ease,transform 0.3s ease;
+}
+
+.nav-icon:hover{
+  color:var(--text);
+  transform:scale(1.1);
+}
+
+.nav-icon svg{
+  width:18px;
+  height:18px;
+  display:block;
+  stroke:currentColor;
+  fill:none;
+  stroke-width:1.4;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.nav-icon .label{
+  margin-left:6px;
+  font-family:'Fraunces',serif;
+  font-size:13px;
+  font-weight:400;
+  letter-spacing:0.1em;
+}
+
+/* ========== 板块容器 ========== */
+.section{
+  display:none;
+  min-height:100vh;
+  padding:120px 48px 80px;
+  opacity:0;
+  animation:fadeIn 0.6s ease forwards;
+}
+
+.section.active{display:block}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ========== 杂志首页 (ZINE) ========== */
+#home{
+  display:none;
+  position:fixed;
+  top:0;left:0;
+  width:100vw;
+  height:100vh;
+  background:#0a0a0a;
+  z-index:50;
+  overflow:hidden;
+}
+
+#home.active{display:block}
+
+/* ZINE 噪点纹理覆盖层 */
+#home::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' /%3E%3CfeColorMatrix values='0 0 0 0 0.9 0 0 0 0 0.85 0 0 0 0 0.78 0 0 0 0.4 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity:0.12;
+  mix-blend-mode:overlay;
+  pointer-events:none;
+  z-index:1;
+}
+
+.magazine{
+  position:relative;
+  width:100%;
+  height:100%;
+  perspective:2000px;
+  perspective-origin:50% 50%;
+  z-index:2;
+}
+
+.magazine-stage{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100vw;
+  height:100vh;
+  transform-style:preserve-3d;
+}
+
+.spread{
+  position:absolute;
+  inset:0;
+  display:flex;
+  gap:0;
+  background:#0f0f0f;
+  box-shadow:none;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.4s ease;
+}
+
+.spread.active{
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* 中缝阴影 */
+.spread::after{
+  content:'';
+  position:absolute;
+  top:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:40px;
+  height:100%;
+  background:linear-gradient(90deg,
+    transparent 0%,
+    rgba(0,0,0,0.4) 45%,
+    rgba(0,0,0,0.6) 50%,
+    rgba(0,0,0,0.4) 55%,
+    transparent 100%);
+  pointer-events:none;
+  z-index:3;
+}
+
+.page{
+  flex:1;
+  position:relative;
+  overflow:hidden;
+  background:transparent;
+  transform-origin:left center;
+  transition:transform 0.85s cubic-bezier(0.5,0,0.3,1),box-shadow 0.85s ease;
+  backface-visibility:hidden;
+}
+
+.page.flipping{
+  transform:rotateY(-180deg);
+  box-shadow:-30px 0 60px rgba(0,0,0,0.7);
+  z-index:10;
+}
+
+/* ZINE 页面边缘做旧（用渐变代替 box-shadow，避免压住彩色背景） */
+.page::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%);
+  pointer-events:none;
+  z-index:2;
+}
+
+.page-image{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+
+/* ZINE 图片包裹层（留边距） */
+.page-image-wrap{
+  position:absolute;
+  inset:80px 60px;
+  overflow:hidden;
+}
+
+/* ZINE 文字页 */
+.page-text{
+  width:100%;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  padding:80px 60px;
+  background:transparent;
+  text-align:left;
+  position:relative;
+}
+
+.page-text.manifesto{
+  font-family:var(--serif);
+  font-size:clamp(32px,4.5vw,56px);
+  font-weight:300;
+  line-height:1.25;
+  letter-spacing:-0.01em;
+  color:var(--text);
+  white-space:pre-line;
+  font-variation-settings:"opsz" 144;
+}
+
+/* ZINE 手写批注 */
+.page-annotation{
+  position:absolute;
+  font-family:'Courier New',monospace;
+  font-size:10px;
+  letter-spacing:0.1em;
+  color:var(--accent);
+  opacity:0.6;
+  text-transform:uppercase;
+}
+
+.page-annotation.tl{top:24px;left:24px}
+.page-annotation.br{bottom:24px;right:24px;transform:rotate(-2deg)}
+
+/* ZINE 产品页（左页网格） */
+.page-products{
+  position:absolute;
+  inset:60px 40px;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  grid-template-rows:repeat(2,1fr);
+  gap:20px 24px;
+}
+
+.product-zine{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  cursor:pointer;
+  transition:transform 0.4s ease;
+}
+
+.product-zine:hover{transform:translateY(-3px)}
+
+.product-zine-img{
+  flex:1;
+  overflow:hidden;
+  background:#0a0a0a;
+  border:1px solid rgba(255,255,255,0.06);
+  position:relative;
+}
+
+.product-zine-img img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  padding:14px;
+}
+
+.product-zine-meta{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  padding:0 2px;
+}
+
+.product-zine-name{
+  font-family:'Courier New',monospace;
+  font-size:11px;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text);
+}
+
+.product-zine-price{
+  font-family:var(--serif);
+  font-size:12px;
+  color:var(--text-dim);
+  font-style:italic;
+}
+
+.product-zine-tag{
+  font-family:'Courier New',monospace;
+  font-size:9px;
+  letter-spacing:0.15em;
+  color:var(--accent);
+  opacity:0.7;
+  padding:0 2px;
+  text-transform:uppercase;
+}
+
+/* ZINE 入口页 */
+.page-enter{
+  width:100%;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  gap:32px;
+  background:transparent;
+  cursor:pointer;
+  text-align:left;
+  padding:80px 60px;
+  position:relative;
+}
+
+.page-enter-title{
+  font-family:var(--serif);
+  font-size:clamp(36px,5vw,64px);
+  font-weight:300;
+  color:#ffffff;
+  letter-spacing:-0.01em;
+  line-height:1.1;
+}
+
+.page-enter-link{
+  cursor:pointer;
+  font-variation-settings:"wght" 300;
+  transition:font-variation-settings 1.2s cubic-bezier(0.2,0.8,0.2,1);
+  display:inline-block;
+}
+.page-enter-link:hover{
+  font-variation-settings:"wght" 700;
+}
+
+/* ZINE 页码（打字机字体） */
+.page-number{
+  position:absolute;
+  bottom:20px;
+  left:24px;
+  font-family:'Courier New',monospace;
+  font-size:10px;
+  letter-spacing:0.2em;
+  color:var(--text-faint);
+  z-index:4;
+}
+
+/* ZINE issue 标记 */
+.spread-stamp{
+  position:absolute;
+  top:20px;
+  right:24px;
+  font-family:'Courier New',monospace;
+  font-size:9px;
+  letter-spacing:0.3em;
+  color:var(--text-faint);
+  text-transform:uppercase;
+  z-index:4;
+  opacity:0.5;
+}
+
+/* 翻页导航 */
+.mag-nav{
+  position:absolute;
+  top:0;
+  height:100%;
+  width:14%;
+  cursor:pointer;
+  z-index:5;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  transition:opacity 0.3s ease;
+}
+
+.mag-nav.left{left:0}
+.mag-nav.right{right:0}
+
+.magazine:hover .mag-nav{opacity:1}
+
+.mag-nav-arrow{
+  font-family:var(--serif);
+  font-size:28px;
+  color:var(--text-dim);
+  font-weight:200;
+  transition:color 0.3s,transform 0.3s;
+}
+
+.mag-nav.left:hover .mag-nav-arrow{transform:translateX(-4px);color:var(--accent)}
+.mag-nav.right:hover .mag-nav-arrow{transform:translateX(4px);color:var(--accent)}
+
+.mag-nav.disabled{pointer-events:none;opacity:0 !important}
+
+/* 页码指示器 */
+.mag-indicator{
+  display:none;
+}
+
+.mag-dot{
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.15);
+  cursor:pointer;
+  transition:all 0.3s ease;
+}
+
+.mag-dot.active{
+  background:var(--accent);
+  width:18px;
+  border-radius:2px;
+}
+
+/* ZINE 顶部 issue 标签 */
+.mag-issue{
+  position:absolute;
+  top:24px;
+  left:50%;
+  transform:translateX(-50%);
+  font-family:'Courier New',monospace;
+  font-size:10px;
+  letter-spacing:0.4em;
+  color:var(--text-faint);
+  text-transform:uppercase;
+  z-index:6;
+  pointer-events:none;
+  display:flex;
+  gap:24px;
+}
+
+.mag-issue span{opacity:0.5}
+.mag-issue .sep{opacity:0.3}
+
+@keyframes breath{
+  0%,100%{opacity:0.3}
+  50%{opacity:0.7}
+}
+
+/* ========== 通用标题 ========== */
+.section-label{
+  display:flex;
+  align-items:baseline;
+  gap:16px;
+  margin-bottom:60px;
+  padding-bottom:20px;
+  border-bottom:1px solid var(--line);
+}
+
+.section-label .num{
+  font-size:12px;
+  color:var(--text-faint);
+  letter-spacing:0.1em;
+  font-feature-settings:"tnum";
+}
+
+.section-label .title{
+  font-size:28px;
+  font-weight:400;
+  letter-spacing:0.05em;
+  color:var(--text);
+}
+
+.section-label .desc{
+  font-size:12px;
+  color:var(--text-dim);
+  letter-spacing:0.1em;
+  margin-left:auto;
+  font-style:italic;
+}
+
+/* ========== ART (Freeform) ========== */
+.art-gallery{
+  display:flex;
+  flex-direction:column;
+  gap:24px;
+  max-width:1400px;
+  margin:0 auto;
+}
+
+.art-row{
+  display:flex;
+  gap:24px;
+  align-items:flex-start;
+}
+
+.art-row.offset{padding-left:15%}
+.art-row.offset-right{padding-left:30%}
+.art-row.center{justify-content:center}
+
+.art-piece{
+  position:relative;
+  cursor:grab;
+  transition:transform 0.5s cubic-bezier(0.2,0.8,0.2,1), filter 0.4s ease;
+  user-select:none;
+  -webkit-user-drag:none;
+  touch-action:none;
+}
+
+.art-piece.dragging{
+  cursor:grabbing;
+  transition:none;
+  z-index:50;
+}
+
+.art-piece.dragging img{
+  filter:brightness(1.08) saturate(1.05);
+}
+
+.art-piece img{
+  display:block;
+  width:100%;
+  height:auto;
+  filter:brightness(0.92);
+  transition:filter 0.5s ease;
+  pointer-events:none;
+}
+
+.art-piece:hover img{filter:brightness(1)}
+
+.art-piece .art-meta{pointer-events:none}
+
+.art-piece .art-meta{
+  margin-top:12px;
+  font-size:11px;
+  letter-spacing:0.15em;
+  color:var(--text-faint);
+  display:flex;
+  gap:16px;
+}
+
+.art-piece .art-meta .title{
+  font-style:italic;
+  color:var(--text-dim);
+}
+
+/* 尺寸变体 */
+.art-piece.s{width:30%}
+.art-piece.m{width:45%}
+.art-piece.l{width:60%}
+.art-piece.xl{width:75%}
+.art-piece.full{width:100%}
+
+/* 拖拽位移 + 初始错位旋转，用变量组合避免冲突 */
+.art-piece{
+  --tx:0px;
+  --ty:0px;
+  --rot:0deg;
+  transform:translate(var(--tx),var(--ty)) rotate(var(--rot));
+}
+
+.art-piece:nth-child(odd){--rot:-0.4deg}
+.art-piece:nth-child(even){--rot:0.25deg}
+
+.art-piece:hover:not(.dragging){
+  --rot:0deg;
+  transform:translate(var(--tx),calc(var(--ty) - 4px)) rotate(0deg);
+}
+
+/* ========== PRODUCT (Grid) ========== */
+.product-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:48px 32px;
+  max-width:1400px;
+  margin:0 auto;
+}
+
+.product-card{
+  cursor:pointer;
+  transition:transform 0.4s ease;
+}
+
+.product-card:hover{transform:translateY(-6px)}
+
+.product-card .product-img{
+  position:relative;
+  overflow:hidden;
+  background:var(--bg-soft);
+  aspect-ratio:4/5;
+}
+
+.product-card .product-img img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  filter:brightness(0.85) saturate(0.9);
+  transition:all 0.6s ease;
+}
+
+.product-card:hover .product-img img{
+  filter:brightness(1) saturate(1);
+  transform:scale(1.03);
+}
+
+.product-card .product-info{
+  margin-top:16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+}
+
+.product-card .product-name{
+  font-size:15px;
+  font-weight:400;
+  letter-spacing:0.05em;
+  color:var(--text);
+}
+
+.product-card .product-price{
+  font-size:13px;
+  color:var(--text-dim);
+  font-feature-settings:"tnum";
+  margin-top:4px;
+  text-transform:uppercase;
+}
+.product-card .product-tag{
+  font-size:10px;
+  letter-spacing:0.2em;
+  color:var(--accent);
+  opacity:0.7;
+}
+
+/* ADD 按钮：hover 出现 */
+.product-add{
+  position:absolute;
+  left:50%;
+  bottom:16px;
+  transform:translate(-50%,8px);
+  background:rgba(10,10,10,0.7);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(232,224,216,0.3);
+  color:var(--text);
+  font-family:'Courier New',monospace;
+  font-size:11px;
+  letter-spacing:0.25em;
+  padding:9px 18px;
+  cursor:pointer;
+  opacity:0;
+  pointer-events:none;
+  transition:all 0.4s cubic-bezier(0.2,0.8,0.2,1);
+  white-space:nowrap;
+}
+.product-card:hover .product-add{
+  opacity:1;
+  pointer-events:auto;
+  transform:translate(-50%,0);
+}
+.product-add:hover{
+  background:var(--text);
+  color:var(--bg);
+  border-color:var(--text);
+}
+.product-add.added{
+  background:var(--accent);
+  color:#fff;
+  border-color:var(--accent);
+}
+
+/* 购物车角标 */
+.nav-icon{position:relative}
+.cart-badge{
+  position:absolute;
+  top:-4px;
+  right:-6px;
+  min-width:14px;
+  height:14px;
+  padding:0 4px;
+  border-radius:7px;
+  background:var(--accent);
+  color:#fff;
+  font-family:'Courier New',monospace;
+  font-size:9px;
+  font-weight:700;
+  line-height:14px;
+  text-align:center;
+  opacity:0;
+  transform:scale(0.5);
+  transition:all 0.3s cubic-bezier(0.2,0.8,0.2,1);
+  pointer-events:none;
+}
+.cart-badge.show{
+  opacity:1;
+  transform:scale(1);
+}
+
+/* ========== MEDIA (Slideshow) ========== */
+.media-stage{
+  max-width:1200px;
+  margin:0 auto;
+  position:relative;
+}
+
+.media-viewer{
+  position:relative;
+  background:var(--bg-soft);
+  overflow:hidden;
+}
+
+.media-slide{
+  display:none;
+  position:relative;
+}
+
+.media-slide.active{display:block}
+
+.media-slide video{
+  width:100%;
+  display:block;
+  filter:brightness(0.95);
+}
+
+.media-caption{
+  margin-top:20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  padding-bottom:16px;
+  border-bottom:1px solid var(--line);
+}
+
+.media-caption .title{
+  font-size:16px;
+  font-style:italic;
+  color:var(--text);
+}
+
+.media-caption .index{
+  font-size:12px;
+  color:var(--text-faint);
+  letter-spacing:0.15em;
+  font-feature-settings:"tnum";
+}
+
+.media-controls{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:24px;
+}
+
+.media-nav{
+  display:flex;
+  gap:20px;
+}
+
+.media-nav button{
+  background:none;
+  border:none;
+  color:var(--text-dim);
+  font-family:var(--serif);
+  font-size:13px;
+  letter-spacing:0.1em;
+  cursor:pointer;
+  padding:8px 16px;
+  transition:color 0.3s ease;
+}
+
+.media-nav button:hover{color:var(--text)}
+
+.media-dots{
+  display:flex;
+  gap:8px;
+}
+
+.media-dots .dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--text-faint);
+  cursor:pointer;
+  transition:background 0.3s ease;
+}
+
+.media-dots .dot.active{background:var(--accent)}
+
+/* ========== ABOUT ========== */
+.about-wrap{
+  max-width:680px;
+  margin:0 auto;
+}
+
+.about-manifesto{
+  margin-bottom:80px;
+}
+
+.about-manifesto p{
+  font-family:var(--serif);
+  font-size:22px;
+  font-weight:300;
+  line-height:1.8;
+  letter-spacing:0.01em;
+  color:var(--text);
+  margin-bottom:8px;
+}
+
+.about-manifesto p.italic{
+  font-style:italic;
+  color:var(--accent);
+  opacity:0.9;
+}
+
+.about-divider{
+  width:40px;
+  height:1px;
+  background:var(--line);
+  margin:60px 0;
+}
+
+.about-body{
+  font-family:var(--serif-cn);
+  font-size:15px;
+  line-height:2;
+  color:var(--text);
+  opacity:0.85;
+  margin-bottom:16px;
+  font-weight:300;
+}
+
+.about-body .em{
+  color:var(--accent);
+  font-style:italic;
+}
+
+.about-sign{
+  margin-top:60px;
+  text-align:right;
+}
+
+.about-sign .quote{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:20px;
+  color:var(--text);
+  margin-bottom:8px;
+}
+
+.about-sign .nee{
+  font-family:var(--sign);
+  font-size:42px;
+  color:var(--accent);
+  line-height:1;
+}
+
+/* ========== 响应式 ========== */
+@media (max-width:768px){
+  .nav{padding:0 24px}
+  .nav-menu{left:24px}
+  .nav-logo img{height:36px}
+  .section{padding:100px 24px 60px}
+  #home{padding:0}
+  .page-text{padding:40px 28px}
+  .page-text.manifesto{font-size:clamp(22px,5vw,34px)}
+  .page-enter{padding:40px 28px}
+  .page-enter-title{font-size:clamp(26px,5vw,38px)}
+  .mag-issue{font-size:8px;gap:12px;top:16px}
+  .spread-stamp{font-size:8px;top:14px;right:14px}
+  .page-number{font-size:9px;bottom:14px;left:14px}
+  .page-products{inset:50px 24px;gap:14px 16px}
+  .product-zine-name{font-size:9px;letter-spacing:0.15em}
+  .product-zine-price{font-size:10px}
+  .product-zine-tag{font-size:8px}
+  .art-row{flex-direction:column;padding-left:0!important}
+  .art-piece.s,.art-piece.m,.art-piece.l,.art-piece.xl,.art-piece.full{width:100%}
+  .product-grid{grid-template-columns:repeat(2,1fr);gap:32px 16px}
+  .about-manifesto p{font-size:18px}
+}
+</style>
+</head>
+<body>
+
+<!-- 导航 -->
+<nav class="nav">
+  <div class="nav-menu" id="navMenu">
+    <button class="menu-icon" onclick="toggleMenu(event)" aria-label="menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a data-section="art" onclick="showSection('art')">ART</a></li>
+      <li><a data-section="product" onclick="showSection('product')">PRODUCT</a></li>
+      <li><a data-section="media" onclick="showSection('media')">MEDIA</a></li>
+      <li><a data-section="about" onclick="showSection('about')">ABOUT</a></li>
+    </ul>
+  </div>
+  <div class="nav-logo" onclick="showSection('home')">
+    <img src="assets/logo-13am.png" alt="13AM">
+  </div>
+  <div class="nav-actions">
+    <button class="nav-icon" onclick="openFavorites()" aria-label="cart">
+      <svg viewBox="0 0 24 24"><path d="M3 4h2l2.5 12h11l2-8h-13"/><circle cx="9" cy="20" r="1.2"/><circle cx="17" cy="20" r="1.2"/></svg>
+      <span class="cart-badge" id="cartBadge">0</span>
+    </button>
+    <button class="nav-icon" onclick="openAuth()" aria-label="account">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- 杂志首页 (ZINE) -->
+<section id="home" class="active">
+  <div class="mag-issue">
+    <span>13AM ZINE</span>
+    <span class="sep">/</span>
+    <span>ISSUE 01</span>
+    <span class="sep">/</span>
+    <span>EST. 2025</span>
+  </div>
+  <div class="magazine">
+    <div class="magazine-stage" id="magStage"></div>
+    <div class="mag-nav left disabled" id="magPrev" onclick="magPrev()">
+      <div class="mag-nav-arrow">‹</div>
+    </div>
+    <div class="mag-nav right" id="magNext" onclick="magNext()">
+      <div class="mag-nav-arrow">›</div>
+    </div>
+    <div class="mag-indicator" id="magIndicator"></div>
+  </div>
+</section>
+
+<!-- ART -->
+<section id="art" class="section">
+  <div class="section-label">
+    <span class="title">ART</span>
+    <span class="desc">untitled works</span>
+  </div>
+  <div class="art-gallery">
+    <div class="art-row center">
+      <div class="art-piece xl"><img src="assets/images/untitled01.jpg" alt=""><div class="art-meta"><span class="title">untitled 01</span><span>2025</span></div></div>
+    </div>
+    <div class="art-row">
+      <div class="art-piece m"><img src="assets/images/untitled02.jpg" alt=""><div class="art-meta"><span class="title">untitled 02</span><span>2025</span></div></div>
+      <div class="art-piece s"><img src="assets/images/untitled05.jpg" alt=""><div class="art-meta"><span class="title">untitled 05</span><span>2025</span></div></div>
+    </div>
+    <div class="art-row offset-right">
+      <div class="art-piece l"><img src="assets/images/untitled03.jpg" alt=""><div class="art-meta"><span class="title">untitled 03</span><span>2025</span></div></div>
+    </div>
+    <div class="art-row">
+      <div class="art-piece s"><img src="assets/images/untitled08.jpg" alt=""><div class="art-meta"><span class="title">untitled 08</span><span>2025</span></div></div>
+      <div class="art-piece m"><img src="assets/images/untitled06.jpg" alt=""><div class="art-meta"><span class="title">untitled 06</span><span>2025</span></div></div>
+    </div>
+    <div class="art-row offset">
+      <div class="art-piece m"><img src="assets/images/untitled04.jpg" alt=""><div class="art-meta"><span class="title">untitled 04</span><span>2025</span></div></div>
+      <div class="art-piece s"><img src="assets/images/untitled09.jpg" alt=""><div class="art-meta"><span class="title">untitled 09</span><span>2025</span></div></div>
+    </div>
+    <div class="art-row center">
+      <div class="art-piece l"><img src="assets/images/untitled07.jpg" alt=""><div class="art-meta"><span class="title">untitled 07</span><span>2025</span></div></div>
+    </div>
+    <div class="art-row offset-right">
+      <div class="art-piece m"><img src="assets/images/untitled10.jpg" alt=""><div class="art-meta"><span class="title">untitled 10</span><span>2025</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT -->
+<section id="product" class="section">
+  <div class="section-label">
+    <span class="title">PRODUCT</span>
+    <span class="desc">available now</span>
+  </div>
+  <div class="product-grid">
+    <div class="product-card" data-id="fire">
+      <div class="product-img">
+        <img src="assets/images/Fire.jpg" alt="">
+        <button class="product-add" onclick="addToCart('fire',event)">＋ ADD</button>
+      </div>
+      <div class="product-info"><span class="product-name">FIRE</span><span class="product-price">¥ TBA</span></div>
+      <div class="product-tag">— element series</div>
+    </div>
+    <div class="product-card" data-id="earth">
+      <div class="product-img">
+        <img src="assets/images/earth.jpg" alt="">
+        <button class="product-add" onclick="addToCart('earth',event)">＋ ADD</button>
+      </div>
+      <div class="product-info"><span class="product-name">EARTH</span><span class="product-price">¥ TBA</span></div>
+      <div class="product-tag">— element series</div>
+    </div>
+    <div class="product-card" data-id="water">
+      <div class="product-img">
+        <img src="assets/images/water.jpg" alt="">
+        <button class="product-add" onclick="addToCart('water',event)">＋ ADD</button>
+      </div>
+      <div class="product-info"><span class="product-name">WATER</span><span class="product-price">¥ TBA</span></div>
+      <div class="product-tag">— element series</div>
+    </div>
+    <div class="product-card" data-id="wind">
+      <div class="product-img">
+        <img src="assets/images/wind.jpg" alt="">
+        <button class="product-add" onclick="addToCart('wind',event)">＋ ADD</button>
+      </div>
+      <div class="product-info"><span class="product-name">WIND</span><span class="product-price">¥ TBA</span></div>
+      <div class="product-tag">— element series</div>
+    </div>
+  </div>
+</section>
+
+<!-- MEDIA -->
+<section id="media" class="section">
+  <div class="section-label">
+    <span class="title">MEDIA</span>
+    <span class="desc">moving images</span>
+  </div>
+  <div class="media-stage">
+    <div class="media-viewer">
+      <div class="media-slide active">
+        <video muted loop playsinline autoplay src="assets/video/13AM_boost.mp4"></video>
+      </div>
+      <div class="media-slide">
+        <video muted loop playsinline src="assets/video/13AM_merge.mp4"></video>
+      </div>
+      <div class="media-slide">
+        <video muted loop playsinline src="assets/video/13AM_snap.mp4"></video>
+      </div>
+    </div>
+    <div class="media-caption">
+      <span class="title" id="mediaTitle">BOOST</span>
+      <span class="index" id="mediaIndex">01 / 03</span>
+    </div>
+    <div class="media-controls">
+      <div class="media-nav">
+        <button onclick="mediaPrev()">← PREV</button>
+        <button onclick="mediaNext()">NEXT →</button>
+      </div>
+      <div class="media-dots">
+        <span class="dot active" onclick="mediaGo(0)"></span>
+        <span class="dot" onclick="mediaGo(1)"></span>
+        <span class="dot" onclick="mediaGo(2)"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="section">
+  <div class="section-label">
+    <span class="title">ABOUT</span>
+    <span class="desc">manifesto</span>
+  </div>
+  <div class="about-wrap">
+    <div class="about-manifesto">
+      <p>WE ARE DEVILS, WE ARE「ONE」。</p>
+      <p class="italic">Dress freely, dance with the chaos.</p>
+      <p>13AM is a vibe without judging.</p>
+      <p class="italic">Be who U are, fight for LOVE.</p>
+    </div>
+    <div class="about-divider"></div>
+    <p class="about-body">人们活在一个被规训好的世界里，不断地去定义好与坏，不断地通过过往的经历判断事物的两面性。在这个二元陷阱里，往往存在着一些"极端"例子。那些看似很奇怪的人，或许正在呵护着一颗善良又柔软的心，而那些表面正义的人实则隐藏了自己见不得人的一面。</p>
+    <p class="about-body">在这个充满物欲的时代，好像纯粹的想法都被迫戴上了功力性的面具。但是我相信总有那么一群<span class="em">不循规蹈矩的人</span>正在坚持活出自己的色彩。</p>
+    <p class="about-body">13am（<span class="em">一时即当下</span>）是我为"不被理解也没关系，只 follow the guts"的我们而创造的品牌，在这里，我们为自己的灵魂喝彩。</p>
+    <div class="about-sign">
+      <p class="quote">" IAM UNIQUE。"</p>
+      <p class="nee">NEE</p>
+    </div>
+  </div>
+</section>
+
+<script>
+// 板块切换
+const sections = document.querySelectorAll('.section, #home');
+const navLinks = document.querySelectorAll('.nav-links a');
+const navMenu = document.getElementById('navMenu');
+
+function showSection(id){
+  sections.forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  navLinks.forEach(a=>a.classList.toggle('active', a.dataset.section===id));
+  navMenu.classList.remove('open');
+  window.scrollTo(0,0);
+  // 媒体板块特殊处理
+  if(id==='media') playActiveMedia();
+}
+
+// 菜单开关
+function toggleMenu(e){
+  if(e) e.stopPropagation();
+  navMenu.classList.toggle('open');
+}
+
+// 点击外部关闭菜单
+document.addEventListener('click', e=>{
+  if(!navMenu.contains(e.target)) navMenu.classList.remove('open');
+});
+
+// ESC 关闭
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape') navMenu.classList.remove('open');
+});
+
+// 购物车 / 登录注册跳转
+function openFavorites(){ window.location.href = 'cart.html'; }
+function openAuth(){ window.location.href = 'login.html'; }
+
+// ========== 加入购物车 ==========
+const CART_KEY = '13am_cart';
+function getCart(){ try{ return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); }catch(e){ return []; } }
+function saveCart(c){ localStorage.setItem(CART_KEY, JSON.stringify(c)); }
+
+function updateCartBadge(){
+  const cart = getCart();
+  const total = cart.reduce((s,i)=>s+i.qty, 0);
+  const badge = document.getElementById('cartBadge');
+  if(!badge) return;
+  badge.textContent = total > 99 ? '99+' : total;
+  badge.classList.toggle('show', total > 0);
+}
+
+function addToCart(id, e){
+  if(e) e.stopPropagation();
+  const cart = getCart();
+  const existing = cart.find(i => i.id === id);
+  if(existing) existing.qty += 1;
+  else cart.push({id, qty:1});
+  saveCart(cart);
+  updateCartBadge();
+
+  // 按钮反馈
+  const btn = e ? e.currentTarget : null;
+  if(btn){
+    const orig = btn.textContent;
+    btn.textContent = '✓ ADDED';
+    btn.classList.add('added');
+    setTimeout(()=>{ btn.textContent = orig; btn.classList.remove('added'); }, 1200);
+  }
+}
+
+// 页面加载时初始化角标
+document.addEventListener('DOMContentLoaded', updateCartBadge);
+
+// ========== 图片取色 + 主题色生成 ==========
+const DEFAULT_PALETTE = {
+  bg:   '#0f0f0f',
+  bg2:  '#0a0a0a',
+  glow: 'rgba(139,0,0,0.08)',
+  accent: '#8b0000',
+  accentDim: 'rgba(139,0,0,0.5)'
+};
+
+function safePalette(p){
+  const ok = v => typeof v==='string' && v.length && !v.includes('NaN');
+  if(!p || !ok(p.bg) || !ok(p.bg2) || !ok(p.glow) || !ok(p.accent) || !ok(p.accentDim)){
+    return DEFAULT_PALETTE;
+  }
+  return p;
+}
+
+// 同一张图颜色固定：用 src 做 key 存在 localStorage
+function getPaletteCacheKey(src){ return 'palette::' + src; }
+
+function rgbToHsl(r,g,b){
+  r/=255;g/=255;b/=255;
+  const max=Math.max(r,g,b),min=Math.min(r,g,b);
+  let h,s,l=(max+min)/2;
+  if(max===min){ h=s=0; }
+  else{
+    const d=max-min;
+    s=l>0.5?d/(2-max-min):d/(max+min);
+    switch(max){
+      case r:h=((g-b)/d+(g<b?6:0))/6;break;
+      case g:h=((b-r)/d+2)/6;break;
+      case b:h=((r-g)/d+4)/6;break;
+    }
+  }
+  return [h*360,s,l];
+}
+
+function hslToCss(h,s,l,a=1){
+  if(!isFinite(h)||!isFinite(s)||!isFinite(l)||!isFinite(a)) return null;
+  return `hsla(${(h).toFixed(0)},${(s*100).toFixed(1)}%,${(l*100).toFixed(1)}%,${a})`;
+}
+
+// 从图片里提取主色，返回 {bg, bg2, glow, accent, accentDim}
+async function extractPalette(src){
+  const cached = localStorage.getItem(getPaletteCacheKey(src));
+  if(cached){ try{ return safePalette(JSON.parse(cached)); }catch(e){} }
+
+  try{
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    await new Promise((res,rej)=>{
+      img.onload = res;
+      img.onerror = rej;
+      img.src = src;
+    });
+
+    const canvas = document.createElement('canvas');
+    const W = 40, H = Math.max(1, Math.round(img.height / img.width * W) || 40);
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img,0,0,W,H);
+    const {data} = ctx.getImageData(0,0,W,H);
+
+    const buckets = new Map();
+    let rSum=0,gSum=0,bSum=0,count=0;
+    for(let i=0;i<data.length;i+=4){
+      const R=data[i],G=data[i+1],B=data[i+2],A=data[i+3];
+      if(A<10) continue;
+      const [h,s,l] = rgbToHsl(R,G,B);
+      if(l<0.06 || l>0.94 || s<0.04) continue;
+      const hKey = Math.round(h/10);
+      if(!buckets.has(hKey)) buckets.set(hKey,[0,0,0,0]);
+      const bucket = buckets.get(hKey);
+      bucket[0]+=R; bucket[1]+=G; bucket[2]+=B; bucket[3]++;
+      rSum+=R; gSum+=G; bSum+=B; count++;
+    }
+
+    let rAvg,gAvg,bAvg;
+    if(buckets.size>0){
+      let maxBucket=null,maxC=0;
+      for(const [k,v] of buckets){ if(v[3]>maxC){maxC=v[3];maxBucket=v;} }
+      if(maxBucket && maxBucket[3]>0){
+        rAvg=maxBucket[0]/maxBucket[3];
+        gAvg=maxBucket[1]/maxBucket[3];
+        bAvg=maxBucket[2]/maxBucket[3];
+      } else if(count>0){
+        rAvg=rSum/count; gAvg=gSum/count; bAvg=bSum/count;
+      } else { rAvg=120; gAvg=110; bAvg=100; }
+    } else if(count>0){
+      rAvg=rSum/count; gAvg=gSum/count; bAvg=bSum/count;
+    } else {
+      rAvg=120; gAvg=110; bAvg=100;
+    }
+
+    const [hRaw,sRaw,_lRaw] = rgbToHsl(rAvg||120, gAvg||110, bAvg||100);
+    const h = isFinite(hRaw) ? hRaw : 30;
+    const s = Math.max(0.15, isFinite(sRaw) ? sRaw : 0.25);
+
+    const bgSat  = Math.max(0.10, s * 0.45);
+    const accSat = Math.max(0.35, s * 0.65);
+    const accLig = Math.min(0.65, 0.32 + s * 0.4);
+
+    const palette = safePalette({
+      bg:   hslToCss(h, bgSat,        0.10) || DEFAULT_PALETTE.bg,
+      bg2:  hslToCss(h, bgSat*0.75,   0.07) || DEFAULT_PALETTE.bg2,
+      glow: hslToCss(h, Math.max(0.15, s*0.5), 0.18, 0.5) || DEFAULT_PALETTE.glow,
+      accent:    hslToCss(h, accSat,        accLig)        || DEFAULT_PALETTE.accent,
+      accentDim: hslToCss(h, Math.max(0.3, s*0.5), 0.45)   || DEFAULT_PALETTE.accentDim
+    });
+
+    try{ localStorage.setItem(getPaletteCacheKey(src), JSON.stringify(palette)); }catch(e){}
+    return palette;
+  }catch(err){
+    console.warn('取色失败，用默认色板:', src, err?.message);
+    return DEFAULT_PALETTE;
+  }
+}
+
+// 给有图片的 spread 应用主题色
+async function applySpreadTheme(spreadEl, spreadData){
+  const imgSide = spreadData.left.type === 'image' ? 'left' :
+                  spreadData.right.type === 'image' ? 'right' : null;
+  if(!imgSide){
+    // 无图 spread：保证不被奇怪样式盖住，回默认
+    spreadEl.style.background = '';
+    return;
+  }
+  const src = spreadData[imgSide].src;
+
+  const palette = await extractPalette(src);
+
+  spreadEl.style.background = `
+    radial-gradient(ellipse at ${imgSide==='left'?'20% 50%':'80% 50%'}, ${palette.glow}, transparent 70%),
+    linear-gradient(135deg, ${palette.bg} 0%, ${palette.bg2} 100%)
+  `;
+  spreadEl.querySelectorAll('.page-annotation').forEach(el=>{ el.style.color = palette.accent; });
+  spreadEl.querySelectorAll('.spread-stamp').forEach(el=>{ el.style.color = palette.accentDim; });
+  spreadEl.querySelectorAll('.page-number').forEach(el=>{ el.style.color = '#ffffff'; });
+}
+
+// ========== 杂志首页引擎 ==========
+let magData = null;
+let magIndex = 0;
+let magFlipping = false;
+
+async function initMagazine(){
+  // URL 带 ?flush 自动清颜色缓存
+  if(location.search.includes('flush')){
+    Object.keys(localStorage).filter(k=>k.startsWith('palette::')).forEach(k=>localStorage.removeItem(k));
+  }
+  try{
+    const res = await fetch('magazine.json');
+    magData = await res.json();
+    renderMagazine();
+  }catch(err){
+    console.error('magazine.json 加载失败:', err);
+    showSection('art');
+  }
+}
+
+function renderMagazine(){
+  const stage = document.getElementById('magStage');
+  const indicator = document.getElementById('magIndicator');
+  stage.innerHTML = '';
+  indicator.innerHTML = '';
+
+  magData.spreads.forEach((spread, i)=>{
+    const el = document.createElement('div');
+    el.className = 'spread' + (i===0 ? ' active' : '');
+    el.dataset.index = i;
+
+    // 左页
+    el.appendChild(renderPage(spread.left, 'left', i));
+    // 右页
+    el.appendChild(renderPage(spread.right, 'right', i));
+
+    // spread 上的 issue 戳记
+    const stamp = document.createElement('div');
+    stamp.className = 'spread-stamp';
+    stamp.textContent = `P.${String(i*2+1).padStart(2,'0')}-${String(i*2+2).padStart(2,'0')}`;
+    el.appendChild(stamp);
+
+    stage.appendChild(el);
+
+    // 如果这个 spread 至少一边有图 → 应用主题色
+    if(spread.left.type === 'image' || spread.right.type === 'image'){
+      applySpreadTheme(el, spread);
+    }
+
+    // 指示器
+    const dot = document.createElement('div');
+    dot.className = 'mag-dot' + (i===0 ? ' active' : '');
+    dot.onclick = ()=>magGoTo(i);
+    indicator.appendChild(dot);
+  });
+
+  updateMagUI();
+}
+
+function renderPage(pageData, side, spreadIndex){
+  const page = document.createElement('div');
+  page.className = 'page page-' + side;
+  page.dataset.side = side;
+
+  if(pageData.type === 'image'){
+    // ZINE 图片包裹层（加半色调网点）
+    const wrap = document.createElement('div');
+    wrap.className = 'page-image-wrap';
+    const img = document.createElement('img');
+    img.className = 'page-image';
+    img.src = pageData.src;
+    img.alt = pageData.alt || '';
+    img.loading = 'lazy';
+    wrap.appendChild(img);
+    page.appendChild(wrap);
+  }
+  else if(pageData.type === 'text'){
+    const text = document.createElement('div');
+    text.className = 'page-text ' + (pageData.style || 'manifesto');
+    text.textContent = pageData.content;
+
+    // ZINE 批注
+    if(pageData.annotation){
+      const ann = document.createElement('div');
+      ann.className = 'page-annotation br';
+      ann.textContent = pageData.annotation;
+      text.appendChild(ann);
+    }
+    page.appendChild(text);
+  }
+  else if(pageData.type === 'products'){
+    // 4 个产品 2x2 网格
+    const products = [
+      {name:'FIRE',  price:'¥ TBA', tag:'element series', img:'assets/images/Fire.jpg'},
+      {name:'EARTH', price:'¥ TBA', tag:'element series', img:'assets/images/earth.jpg'},
+      {name:'WATER', price:'¥ TBA', tag:'element series', img:'assets/images/water.jpg'},
+      {name:'WIND',  price:'¥ TBA', tag:'element series', img:'assets/images/wind.jpg'},
+    ];
+    const grid = document.createElement('div');
+    grid.className = 'page-products';
+    products.forEach(p=>{
+      const card = document.createElement('div');
+      card.className = 'product-zine';
+      card.onclick = (e)=>{ e.stopPropagation(); showSection('product'); };
+      card.innerHTML = `
+        <div class="product-zine-img"><img src="${p.img}" alt="${p.name}"></div>
+        <div class="product-zine-meta">
+          <span class="product-zine-name">${p.name}</span>
+          <span class="product-zine-price">${p.price}</span>
+        </div>
+        <div class="product-zine-tag">— ${p.tag}</div>
+      `;
+      grid.appendChild(card);
+    });
+    page.appendChild(grid);
+  }
+  else if(pageData.type === 'enter'){
+    const enter = document.createElement('div');
+    enter.className = 'page-enter';
+    // 把 13am 包成可点击链接，其余文字纯展示
+    const html = pageData.content
+      .replace(/\n/g,'<br>')
+      .replace(/13am/gi, '<span class="page-enter-link" data-target="' + (pageData.target || 'art') + '">$&</span>');
+    enter.innerHTML = `<div class="page-enter-title">${html}</div>`;
+    enter.querySelectorAll('.page-enter-link').forEach(link=>{
+      link.onclick = (e)=>{
+        e.stopPropagation();
+        showSection(link.dataset.target);
+      };
+    });
+    page.appendChild(enter);
+  }
+
+  // ZINE 页码
+  const num = document.createElement('div');
+  num.className = 'page-number';
+  const pageNum = side === 'left' ? spreadIndex*2+1 : spreadIndex*2+2;
+  num.textContent = String(pageNum).padStart(2,'0');
+  page.appendChild(num);
+
+  return page;
+}
+
+function magNext(){
+  if(magFlipping || !magData) return;
+  if(magIndex >= magData.spreads.length - 1) return;
+  magFlip(magIndex + 1);
+}
+
+function magPrev(){
+  if(magFlipping || !magData) return;
+  if(magIndex <= 0) return;
+  magFlip(magIndex - 1);
+}
+
+function magGoTo(target){
+  if(magFlipping || !magData) return;
+  if(target === magIndex) return;
+  magFlip(target);
+}
+
+function magFlip(target){
+  magFlipping = true;
+  const spreads = document.querySelectorAll('.spread');
+  const current = spreads[magIndex];
+  const next = spreads[target];
+  const direction = target > magIndex ? 'forward' : 'backward';
+
+  // 翻页动画：右页翻向左
+  const flippingPage = current.querySelector('.page-right');
+  if(direction === 'forward' && flippingPage){
+    flippingPage.classList.add('flipping');
+  }
+
+  setTimeout(()=>{
+    current.classList.remove('active');
+    next.classList.add('active');
+    if(flippingPage) flippingPage.classList.remove('flipping');
+    magIndex = target;
+    updateMagUI();
+    magFlipping = false;
+  }, 500);
+}
+
+function updateMagUI(){
+  const total = magData ? magData.spreads.length : 5;
+
+  document.querySelectorAll('.mag-dot').forEach((d,i)=>{
+    d.classList.toggle('active', i === magIndex);
+  });
+
+  document.getElementById('magPrev').classList.toggle('disabled', magIndex === 0);
+  document.getElementById('magNext').classList.toggle('disabled', magIndex === total - 1);
+}
+
+// 键盘翻页
+document.addEventListener('keydown', e=>{
+  if(!document.getElementById('home').classList.contains('active')) return;
+  if(e.key === 'ArrowRight') magNext();
+  else if(e.key === 'ArrowLeft') magPrev();
+});
+
+// 触摸滑动翻页
+let touchStartX = 0;
+document.addEventListener('touchstart', e=>{
+  if(!document.getElementById('home').classList.contains('active')) return;
+  touchStartX = e.touches[0].clientX;
+});
+document.addEventListener('touchend', e=>{
+  if(!document.getElementById('home').classList.contains('active')) return;
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if(Math.abs(dx) > 50){
+    if(dx < 0) magNext();
+    else magPrev();
+  }
+});
+
+// 启动
+initMagazine();
+
+// Media 轮播
+const slides = document.querySelectorAll('.media-slide');
+const videos = document.querySelectorAll('.media-slide video');
+const titles = ['BOOST','MERGE','SNAP'];
+const dots = document.querySelectorAll('.media-dots .dot');
+let mediaIdx = 0;
+
+function mediaGo(i){
+  mediaIdx = (i+slides.length)%slides.length;
+  slides.forEach((s,idx)=>s.classList.toggle('active', idx===mediaIdx));
+  dots.forEach((d,idx)=>d.classList.toggle('active', idx===mediaIdx));
+  document.getElementById('mediaTitle').textContent = titles[mediaIdx];
+  document.getElementById('mediaIndex').textContent = String(mediaIdx+1).padStart(2,'0')+' / 03';
+  playActiveMedia();
+}
+
+function mediaNext(){mediaGo(mediaIdx+1)}
+function mediaPrev(){mediaGo(mediaIdx-1)}
+
+function playActiveMedia(){
+  videos.forEach((v,idx)=>{
+    if(idx===mediaIdx) v.play().catch(()=>{});
+    else v.pause();
+  });
+}
+
+// 键盘导航
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight' && document.getElementById('media').classList.contains('active')) mediaNext();
+  if(e.key==='ArrowLeft' && document.getElementById('media').classList.contains('active')) mediaPrev();
+});
+
+// ART 画作拖拽（鼠标 + 触摸）
+(function(){
+  const pieces = document.querySelectorAll('.art-piece');
+  let drag = null;
+
+  function getPoint(e){
+    if(e.touches && e.touches[0]) return {x:e.touches[0].clientX, y:e.touches[0].clientY};
+    return {x:e.clientX, y:e.clientY};
+  }
+
+  function start(e, piece){
+    // 排除链接点击
+    e.preventDefault();
+    const p = getPoint(e);
+    const cs = getComputedStyle(piece);
+    const tx = parseFloat(cs.getPropertyValue('--tx')) || 0;
+    const ty = parseFloat(cs.getPropertyValue('--ty')) || 0;
+    drag = {
+      piece,
+      startX: p.x,
+      startY: p.y,
+      baseTx: tx,
+      baseTy: ty,
+      moved: false
+    };
+    piece.classList.add('dragging');
+  }
+
+  function move(e){
+    if(!drag) return;
+    const p = getPoint(e);
+    const dx = p.x - drag.startX;
+    const dy = p.y - drag.startY;
+    if(Math.abs(dx) > 2 || Math.abs(dy) > 2) drag.moved = true;
+    drag.piece.style.setProperty('--tx', drag.baseTx + dx + 'px');
+    drag.piece.style.setProperty('--ty', drag.baseTy + dy + 'px');
+  }
+
+  function end(){
+    if(!drag) return;
+    drag.piece.classList.remove('dragging');
+    // 拖动过的作品提升 z-index，让它停在上方
+    if(drag.moved){
+      drag.piece.style.zIndex = (10 + Math.floor(Math.random()*5));
+    }
+    drag = null;
+  }
+
+  pieces.forEach(piece => {
+    piece.addEventListener('mousedown', e => start(e, piece));
+    piece.addEventListener('touchstart', e => start(e, piece), {passive:false});
+  });
+
+  document.addEventListener('mousemove', move);
+  document.addEventListener('touchmove', move, {passive:false});
+  document.addEventListener('mouseup', end);
+  document.addEventListener('touchend', end);
+  document.addEventListener('touchcancel', end);
+})();
+
+// 根据 URL hash 自动跳转板块
+(function handleHash(){
+  const valid = ['home','art','product','media','about'];
+  function goFromHash(){
+    const h = window.location.hash.replace('#','');
+    if(valid.includes(h)) showSection(h);
+  }
+  goFromHash();
+  window.addEventListener('hashchange', goFromHash);
+})();
+</script>
+</body>
+</html>

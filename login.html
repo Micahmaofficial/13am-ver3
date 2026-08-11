@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log in — 13AM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Noto+Serif+SC:wght@300;400;500&family=Sacramento&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0a;
+  --bg-soft:#121010;
+  --text:#e8e0d8;
+  --text-dim:#6a655f;
+  --text-faint:#3a3530;
+  --line:#1f1c18;
+  --accent:#8b0000;
+  --serif:'Fraunces','Noto Serif SC',serif;
+  --sign:'Sacramento',cursive;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--serif);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:40px 24px;
+}
+::selection{background:var(--accent);color:var(--bg)}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+
+/* 返回 */
+.back-btn{
+  position:fixed;
+  top:24px;
+  left:48px;
+  background:none;
+  border:none;
+  color:var(--text-dim);
+  font-family:var(--serif);
+  font-size:13px;
+  letter-spacing:0.1em;
+  cursor:pointer;
+  padding:6px 0;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  transition:color 0.3s ease;
+  z-index:10;
+}
+.back-btn:hover{color:var(--text)}
+.back-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+
+/* 表单卡片 */
+.card{
+  width:100%;
+  max-width:380px;
+  text-align:center;
+}
+
+.card .mark{
+  font-size:22px;
+  letter-spacing:0.1em;
+  font-weight:400;
+  color:var(--text);
+  margin-bottom:8px;
+}
+
+.card .greet{
+  font-size:13px;
+  color:var(--text-dim);
+  letter-spacing:0.15em;
+  margin-bottom:48px;
+}
+
+/* tab 切换 */
+.tabs{
+  display:flex;
+  justify-content:center;
+  gap:32px;
+  margin-bottom:36px;
+  border-bottom:1px solid var(--line);
+}
+.tab{
+  background:none;
+  border:none;
+  color:var(--text-faint);
+  font-family:var(--serif);
+  font-size:13px;
+  letter-spacing:0.15em;
+  cursor:pointer;
+  padding:0 0 12px;
+  position:relative;
+  transition:color 0.3s ease;
+}
+.tab.active{color:var(--text)}
+.tab.active::after{
+  content:'';
+  position:absolute;
+  bottom:-1px;
+  left:0;right:0;
+  height:1px;
+  background:var(--accent);
+}
+
+/* 表单字段 */
+.field{
+  margin-bottom:18px;
+  text-align:left;
+}
+.field label{
+  display:block;
+  font-size:11px;
+  letter-spacing:0.2em;
+  color:var(--text-faint);
+  margin-bottom:8px;
+  text-transform:uppercase;
+}
+.field input{
+  width:100%;
+  background:none;
+  border:none;
+  border-bottom:1px solid var(--line);
+  color:var(--text);
+  font-family:var(--serif);
+  font-size:15px;
+  padding:8px 0 10px;
+  outline:none;
+  transition:border-color 0.3s ease;
+}
+.field input::placeholder{color:var(--text-faint);font-style:italic}
+.field input:focus{border-bottom-color:var(--accent)}
+
+/* 提交按钮 */
+.submit{
+  width:100%;
+  margin-top:20px;
+  padding:14px;
+  background:var(--accent);
+  color:var(--bg);
+  border:none;
+  font-family:var(--serif);
+  font-size:13px;
+  letter-spacing:0.2em;
+  cursor:pointer;
+  transition:all 0.3s ease;
+}
+.submit:hover{background:var(--text)}
+
+/* 切换提示 */
+.switch-hint{
+  margin-top:28px;
+  font-size:12px;
+  color:var(--text-dim);
+  letter-spacing:0.05em;
+}
+.switch-hint a{
+  color:var(--accent);
+  text-decoration:none;
+  font-style:italic;
+  cursor:pointer;
+  margin-left:6px;
+}
+
+/* 装饰签名 */
+.deco{
+  margin-top:60px;
+  font-family:var(--sign);
+  font-size:24px;
+  color:var(--text-faint);
+  opacity:0.6;
+}
+
+/* 注册表单默认隐藏 */
+#registerForm{display:none}
+#registerForm.active{display:block}
+#loginForm.active{display:block}
+#loginForm:not(.active){display:none}
+
+@media (max-width:768px){
+  .back-btn{left:24px;top:20px}
+  .card{max-width:100%}
+}
+</style>
+</head>
+<body>
+
+<button class="back-btn" onclick="history.back()">
+  <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+  BACK
+</button>
+
+<div class="card">
+  <div class="mark">13AM</div>
+  <div class="greet">一时即当下</div>
+
+  <div class="tabs">
+    <button class="tab active" id="tabLogin" onclick="switchTab('login')">LOG IN</button>
+    <button class="tab" id="tabRegister" onclick="switchTab('register')">SIGN UP</button>
+  </div>
+
+  <!-- 登录 -->
+  <form id="loginForm" class="active" onsubmit="submitLogin(event)">
+    <div class="field">
+      <label>Email</label>
+      <input type="email" placeholder="you@13am.world" required>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" placeholder="••••••••" required>
+    </div>
+    <button type="submit" class="submit">ENTER</button>
+    <p class="switch-hint">No account yet?<a onclick="switchTab('register')">sign up</a></p>
+  </form>
+
+  <!-- 注册 -->
+  <form id="registerForm" onsubmit="submitRegister(event)">
+    <div class="field">
+      <label>Name</label>
+      <input type="text" placeholder="your name" required>
+    </div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" placeholder="you@13am.world" required>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" placeholder="••••••••" required>
+    </div>
+    <button type="submit" class="submit">JOIN</button>
+    <p class="switch-hint">Already one of us?<a onclick="switchTab('login')">log in</a></p>
+  </form>
+
+  <div class="deco">NEE</div>
+</div>
+
+<script>
+function switchTab(mode){
+  const login = document.getElementById('loginForm');
+  const reg = document.getElementById('registerForm');
+  const tl = document.getElementById('tabLogin');
+  const tr = document.getElementById('tabRegister');
+  if(mode === 'login'){
+    login.classList.add('active');
+    reg.classList.remove('active');
+    tl.classList.add('active');
+    tr.classList.remove('active');
+  } else {
+    reg.classList.add('active');
+    login.classList.remove('active');
+    tr.classList.add('active');
+    tl.classList.remove('active');
+  }
+}
+
+function submitLogin(e){
+  e.preventDefault();
+  alert('Login flow — connect to backend.');
+}
+
+function submitRegister(e){
+  e.preventDefault();
+  alert('Sign up flow — connect to backend.');
+}
+</script>
+</body>
+</html>
