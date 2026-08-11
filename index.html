@@ -1300,6 +1300,18 @@ function addToCart(id, e){
 
 // 页面加载时初始化角标
 document.addEventListener('DOMContentLoaded', updateCartBadge);
+// bfcache 返回时重算（从 cart.html 删除商品返回场景）
+window.addEventListener('pageshow', e=>{
+  if(e.persisted) updateCartBadge();
+});
+// 后台标签切回前台时重算
+document.addEventListener('visibilitychange', ()=>{
+  if(!document.hidden) updateCartBadge();
+});
+// 跨标签页同步：cart.html 改了 localStorage 时实时更新
+window.addEventListener('storage', e=>{
+  if(e.key === CART_KEY) updateCartBadge();
+});
 
 // ========== 图片取色 + 主题色生成 ==========
 const DEFAULT_PALETTE = {
