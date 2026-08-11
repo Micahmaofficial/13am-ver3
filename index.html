@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base href="./">
 <title>13AM — 一时即当下</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1347,19 +1348,32 @@ async function extractPalette(src){
 
   try{
     const img = new Image();
-    img.crossOrigin = 'anonymous';
-    await new Promise((res,rej)=>{
+    // 只有跨域时才设 crossOrigin，避免 GitHub Pages 下同源缓存导致 CORS 伪影
+    try{
+      const abs = new URL(src, location.href);
+      if(abs.origin !== location.origin) img.crossOrigin = 'anonymous';
+    }catch(e){}
+    await new Promise((res)=>{
       img.onload = res;
-      img.onerror = rej;
-      img.src = src;
+      img.onerror = ()=>res(); // 加载失败也继续，后续返回默认色板
+      img.src = new URL(src, location.href).href;
     });
+    if(!img.complete || !img.naturalWidth){ return DEFAULT_PALETTE; }
 
     const canvas = document.createElement('canvas');
     const W = 40, H = Math.max(1, Math.round(img.height / img.width * W) || 40);
     canvas.width = W; canvas.height = H;
     const ctx = canvas.getContext('2d');
-    ctx.drawImage(img,0,0,W,H);
-    const {data} = ctx.getImageData(0,0,W,H);
+    try{
+      ctx.drawImage(img,0,0,W,H);
+    }catch(e){ return DEFAULT_PALETTE; }
+    let data;
+    try{
+      data = ctx.getImageData(0,0,W,H).data;
+    }catch(e){
+      // Canvas 取色被污染，退回默认
+      return DEFAULT_PALETTE;
+    }
 
     const buckets = new Map();
     let rSum=0,gSum=0,bSum=0,count=0;
@@ -1425,7 +1439,7 @@ async function applySpreadTheme(spreadEl, spreadData){
     spreadEl.style.background = '';
     return;
   }
-  const src = spreadData[imgSide].src;
+  const src = new URL(spreadData[imgSide].src, location.href).href;
 
   const palette = await extractPalette(src);
 
@@ -1449,7 +1463,7 @@ async function initMagazine(){
     Object.keys(localStorage).filter(k=>k.startsWith('palette::')).forEach(k=>localStorage.removeItem(k));
   }
   try{
-    const res = await fetch('magazine.json');
+    const res = await fetch(new URL('magazine.json', location.href).href);
     magData = await res.json();
     renderMagazine();
   }catch(err){
@@ -1508,7 +1522,7 @@ function renderPage(pageData, side, spreadIndex){
     wrap.className = 'page-image-wrap';
     const img = document.createElement('img');
     img.className = 'page-image';
-    img.src = pageData.src;
+    img.src = new URL(pageData.src, location.href).href;
     img.alt = pageData.alt || '';
     img.loading = 'lazy';
     wrap.appendChild(img);

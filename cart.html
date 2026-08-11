@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base href="./">
 <title>Cart — 13AM</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -314,10 +315,10 @@ let cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
 
 // 商品信息映射（实际项目可从后端获取）
 const products = {
-  fire:  {name:'FIRE',  tag:'element series', price:0, img:'assets/images/Fire.jpg'},
-  earth: {name:'EARTH', tag:'element series', price:0, img:'assets/images/earth.jpg'},
-  water: {name:'WATER', tag:'element series', price:0, img:'assets/images/water.jpg'},
-  wind:  {name:'WIND',  tag:'element series', price:0, img:'assets/images/wind.jpg'}
+  fire:  {name:'FIRE',  tag:'element series', price:0, img:new URL('assets/images/Fire.jpg', location.href).href},
+  earth: {name:'EARTH', tag:'element series', price:0, img:new URL('assets/images/earth.jpg', location.href).href},
+  water: {name:'WATER', tag:'element series', price:0, img:new URL('assets/images/water.jpg', location.href).href},
+  wind:  {name:'WIND',  tag:'element series', price:0, img:new URL('assets/images/wind.jpg', location.href).href}
 };
 
 function render(){
