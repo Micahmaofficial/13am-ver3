@@ -315,14 +315,41 @@ body{
 // 购物车数据（暂存 localStorage）
 const CART_KEY = '13am_cart';
 let cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+let products = {};  // 从 products.json 加载
 
-// 商品信息映射（实际项目可从后端获取）
-const products = {
-  fire:  {name:'FIRE',  tag:'element series', price:0, img:new URL('assets/images/Fire.jpg', location.href).href},
-  earth: {name:'EARTH', tag:'element series', price:0, img:new URL('assets/images/earth.jpg', location.href).href},
-  water: {name:'WATER', tag:'element series', price:0, img:new URL('assets/images/water.jpg', location.href).href},
-  wind:  {name:'WIND',  tag:'element series', price:0, img:new URL('assets/images/wind.jpg', location.href).href}
-};
+function getCart(){ return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); }
+function saveCart(c){ localStorage.setItem(CART_KEY, JSON.stringify(c)); cart = c; }
+
+async function loadProducts(){
+  try{
+    const r = await fetch('products.json?_=' + Date.now());
+    if(!r.ok) throw new Error('products.json 加载失败');
+    const data = await r.json();
+    const list = (data && data.products) ? data.products : [];
+    const map = {};
+    list.forEach(p=>{
+      map[p.id] = {
+        name: p.name,
+        tag: p.tag || 'element series',
+        price: p.price || 0,
+        currency: p.currency || '¥',
+        img: new URL(p.cover, location.href).href
+      };
+    });
+    return map;
+  }catch(err){
+    console.warn('回退使用内置映射', err);
+    return {
+      '13-ring':     {name:'13 RING',    tag:'accessory', price:0, currency:'¥', img:new URL('assets/images/13ring.png', location.href).href},
+      '13-ring-2':   {name:'13 RING II', tag:'accessory', price:0, currency:'¥', img:new URL('assets/images/13-ring-2.jpg', location.href).href},
+      '13atm-tshirt':{name:'13ATM TEE',  tag:'clothing',  price:0, currency:'¥', img:new URL('assets/images/13atm-tshirt.png', location.href).href},
+      'art-bag':     {name:'ART BAG',    tag:'bag',       price:0, currency:'¥', img:new URL('assets/images/art-bag.jpg', location.href).href},
+      'bam-bag':     {name:'BAM BAG',    tag:'bag',       price:0, currency:'¥', img:new URL('assets/images/bam-bag.jpg', location.href).href},
+      'bam-hat':     {name:'BAM HAT',    tag:'accessory', price:0, currency:'¥', img:new URL('assets/images/bam-hat.jpg', location.href).href},
+      'polar-fleece':{name:'POLAR FLEECE',tag:'clothing', price:0, currency:'¥', img:new URL('assets/images/polar-fleece.jpg', location.href).href}
+    };
+  }
+}
 
 function render(){
   const list = document.getElementById('cartList');
@@ -335,33 +362,45 @@ function render(){
     total.style.display = 'none';
     empty.style.display = 'block';
     label.textContent = 'empty';
+    document.getElementById('totalAmount').textContent = '¥ 0';
     return;
   }
 
   empty.style.display = 'none';
   list.style.display = 'flex';
   total.style.display = 'block';
-  label.textContent = cart.length + (cart.length === 1 ? ' item' : ' items');
 
+  // 按条目计数（同款不同尺码算两条），同时统计件数
+  const totalQty = cart.reduce((s,i)=>s + (i.qty||0), 0);
+  label.textContent = cart.length + (cart.length === 1 ? ' item / ' : ' items / ') + totalQty + ' pcs';
+
+  let subtotal = 0;
   list.innerHTML = cart.map((item, idx)=>{
     const p = products[item.id];
     if(!p) return '';
+    const priceStr = p.price > 0 ? `${p.currency} ${(p.price * item.qty).toLocaleString()}` : `${p.currency} TBA`;
+    if(p.price > 0) subtotal += p.price * item.qty;
     return `<div class="cart-item">
       <img src="${p.img}" alt="">
       <div>
         <div class="name">${p.name}</div>
-        <div class="tag">— ${p.tag}</div>
+        <div class="tag">— ${p.tag}${item.size ? ' · SIZE ' + item.size : ''}</div>
       </div>
       <div class="qty">× ${item.qty}</div>
-      <div class="price">¥ TBA</div>
+      <div class="price">${priceStr}</div>
       <button class="remove" onclick="removeItem(${idx})">REMOVE</button>
     </div>`;
   }).join('');
+
+  document.getElementById('totalAmount').textContent = subtotal > 0
+    ? `¥ ${subtotal.toLocaleString()}`
+    : '¥ TBA';
 }
 
 function removeItem(idx){
-  cart.splice(idx, 1);
-  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  const c = getCart();
+  c.splice(idx, 1);
+  saveCart(c);
   render();
 }
 
@@ -369,15 +408,34 @@ function checkout(){
   alert('Checkout flow — coming soon.');
 }
 
-// 暴露给主页用
-window.addToCart = function(id){
-  const existing = cart.find(i => i.id === id);
-  if(existing) existing.qty += 1;
-  else cart.push({id, qty:1});
-  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+// 暴露给详情页/主页用（同步 size 字段）
+window.addToCart = function(id, opts){
+  const size = (opts && opts.size) || null;
+  const qty  = (opts && opts.qty) || 1;
+  const c = getCart();
+  const key = id + (size ? '::' + size : '');
+  const existing = c.find(i => (i.id + (i.size ? '::' + i.size : '')) === key);
+  if(existing) existing.qty += qty;
+  else c.push({id, size, qty});
+  saveCart(c);
 };
 
-render();
+// 跨页/返回时刷新
+window.addEventListener('storage', e=>{
+  if(e.key === CART_KEY){ cart = getCart(); render(); }
+});
+window.addEventListener('pageshow', e=>{
+  if(e.persisted){ cart = getCart(); render(); }
+});
+document.addEventListener('visibilitychange', ()=>{
+  if(!document.hidden){ cart = getCart(); render(); }
+});
+
+// 启动：加载映射 -> 渲染
+loadProducts().then(m=>{
+  products = m;
+  render();
+});
 </script>
 </body>
 </html>

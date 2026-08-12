@@ -1,0 +1,118 @@
+{
+  "products": [
+    {
+      "id": "13-ring",
+      "name": "13 RING",
+      "tag": "ACCESSORY · 01",
+      "category": "accessory",
+      "price": 0,
+      "currency": "¥",
+      "cover": "assets/images/13ring.png",
+      "gallery": [
+        "assets/images/13ring.png"
+      ],
+      "short": "Carry the number. Become the mark.",
+      "description": "13 RING.\n\n纯银锻造，开口可调节。外圈刻有「13」数字浮雕，内壁镌刻 13AM 暗纹。\n\n一枚戒指，一个记号。",
+      "sizes": [],
+      "sizeNote": ""
+    },
+    {
+      "id": "13-ring-2",
+      "name": "13 RING II",
+      "tag": "ACCESSORY · 02",
+      "category": "accessory",
+      "price": 0,
+      "currency": "¥",
+      "cover": "assets/images/13-ring-2.jpg",
+      "gallery": [
+        "assets/images/13-ring-2.jpg"
+      ],
+      "short": "The second mark. Same chaos, new form.",
+      "description": "13 RING II.\n\n宽版戒面，氧化做旧处理。比初版更厚、更沉、更不妥协。\n\n戴上去，就别想轻易摘下来。",
+      "sizes": [],
+      "sizeNote": ""
+    },
+    {
+      "id": "13atm-tshirt",
+      "name": "13ATM TEE",
+      "tag": "CLOTHING · 01",
+      "category": "clothing",
+      "price": 0,
+      "currency": "¥",
+      "cover": "assets/images/13atm-tshirt.png",
+      "gallery": [
+        "assets/images/13atm-tshirt.png"
+      ],
+      "short": "A flag you can wear.",
+      "description": "13ATM T-SHIRT.\n\n260g 重磅纯棉，落肩宽松版型。前胸 13AM 标志印花，后颈处小标暗绣。\n\n水洗后不会变形——它只会更旧、更像你的。",
+      "sizes": ["S", "M", "L", "XL"],
+      "sizeNote": "模型身高 180cm，体重 65kg，穿着 M。"
+    },
+    {
+      "id": "art-bag",
+      "name": "ART BAG",
+      "tag": "BAG · 01",
+      "category": "bag",
+      "price": 0,
+      "currency": "¥",
+      "cover": "assets/images/art-bag.jpg",
+      "gallery": [
+        "assets/images/art-bag.jpg"
+      ],
+      "short": "Carry what matters. Leave the rest.",
+      "description": "ART BAG.\n\n重磅帆布托特包，容量够装下一切。手绘图案，每只略有不同。\n\n没有拉链，没有隔层——它就是一个开口的容器。",
+      "sizes": [],
+      "sizeNote": ""
+    },
+    {
+      "id": "bam-bag",
+      "name": "BAM BAG",
+      "tag": "BAG · 02",
+      "category": "bag",
+      "price": 0,
+      "currency": "¥",
+      "cover": "assets/images/bam-bag.jpg",
+      "gallery": [
+        "assets/images/bam-bag.jpg",
+        "assets/images/bam-bag-display.jpg",
+        "assets/images/bam-bag-display-2.jpg"
+      ],
+      "short": "Soft structure. Hard intent.",
+      "description": "BAM BAG.\n\n软结构单肩包，尼龙面料，磁吸翻盖开合。内设一个暗袋，外面看不到。\n\n背上它的时候，你知道里面有什么，别人不需要知道。",
+      "sizes": [],
+      "sizeNote": ""
+    },
+    {
+      "id": "bam-hat",
+      "name": "BAM HAT",
+      "tag": "ACCESSORY · 03",
+      "category": "accessory",
+      "price": 0,
+      "currency": "¥",
+      "cover": "assets/images/bam-hat.jpg",
+      "gallery": [
+        "assets/images/bam-hat.jpg"
+      ],
+      "short": "Low eyes. No apologies.",
+      "description": "BAM HAT.\n\n水洗棉棒球帽，弧形帽檐，后扣可调。正面刺绣 BAM 字样。\n\n压低帽檐，世界就安静了。",
+      "sizes": [],
+      "sizeNote": ""
+    },
+    {
+      "id": "polar-fleece",
+      "name": "POLAR FLEECE",
+      "tag": "CLOTHING · 02",
+      "category": "clothing",
+      "price": 0,
+      "currency": "¥",
+      "cover": "assets/images/polar-fleece.jpg",
+      "gallery": [
+        "assets/images/polar-fleece.jpg"
+      ],
+      "short": "Warm enough to stay cold.",
+      "description": "POLAR FLEECE.\n\n摇粒绒拉链外套，双面刷毛，手感扎实。半高立领，拉链拉到顶能挡风。\n\n轻、暖、不臃肿——冬天里的第二层皮肤。",
+      "sizes": ["S", "M", "L", "XL"],
+      "sizeNote": "模型身高 175cm，体重 62kg，穿着 M。"
+    }
+  ]
+}

@@ -860,95 +860,121 @@ body{
   transform:scale(1);
 }
 
-/* ========== MEDIA (Slideshow) ========== */
-.media-stage{
-  max-width:1200px;
+/* ========== MEDIA · Pinterest 瀑布流 ========== */
+.media-wall{
+  max-width:1320px;
   margin:0 auto;
-  position:relative;
+  columns:3;
+  column-gap:20px;
 }
-
-.media-viewer{
+.media-tile{
+  break-inside:avoid;
+  margin-bottom:20px;
   position:relative;
-  background:var(--bg-soft);
+  cursor:pointer;
   overflow:hidden;
+  background:#000;
+  box-shadow:0 2px 10px rgba(0,0,0,0.4);
+  transition:transform 0.35s cubic-bezier(0.2,0.8,0.2,1), box-shadow 0.35s ease, filter 0.35s ease;
+  filter:grayscale(0.1) brightness(0.92);
 }
-
-.media-slide{
-  display:none;
-  position:relative;
+.media-tile:hover{
+  transform:translateY(-4px);
+  filter:grayscale(0) brightness(1);
+  box-shadow:0 8px 24px rgba(0,0,0,0.5), 0 0 0 1px rgba(139,0,0,0.3);
 }
-
-.media-slide.active{display:block}
-
-.media-slide video{
+.media-tile video,
+.media-tile .tile-poster{
   width:100%;
   display:block;
-  filter:brightness(0.95);
+}
+.media-tile .tile-label{
+  position:absolute;
+  left:0;right:0;bottom:0;
+  padding:10px 14px;
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:0.18em;
+  color:rgba(232,224,216,0.9);
+  background:linear-gradient(transparent, rgba(10,10,10,0.85));
+  text-transform:uppercase;
+  opacity:0;
+  transform:translateY(8px);
+  transition:opacity 0.35s ease, transform 0.35s ease;
+}
+.media-tile:hover .tile-label{
+  opacity:1;
+  transform:translateY(0);
+}
+.media-tile .tile-num{
+  position:absolute;
+  top:10px;
+  left:10px;
+  font-family:var(--serif);
+  font-size:11px;
+  color:rgba(232,224,216,0.6);
+  letter-spacing:0.1em;
 }
 
-.media-caption{
-  margin-top:20px;
+/* MEDIA · 视频播放 overlay */
+.media-stage-overlay{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  background:rgba(5,5,5,0.95);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  display:none;
+  opacity:0;
+  transition:opacity 0.4s ease;
+}
+.media-stage-overlay.show{
   display:flex;
-  justify-content:space-between;
-  align-items:baseline;
-  padding-bottom:16px;
-  border-bottom:1px solid var(--line);
-}
-
-.media-caption .title{
-  font-size:16px;
-  font-style:italic;
-  color:var(--text);
-}
-
-.media-caption .index{
-  font-size:12px;
-  color:var(--text-faint);
-  letter-spacing:0.15em;
-  font-feature-settings:"tnum";
-}
-
-.media-controls{
-  display:flex;
-  justify-content:space-between;
   align-items:center;
-  margin-top:24px;
+  justify-content:center;
+  opacity:1;
 }
-
-.media-nav{
-  display:flex;
-  gap:20px;
-}
-
-.media-nav button{
-  background:none;
-  border:none;
+.media-stage-close{
+  position:absolute;
+  top:28px;right:36px;
+  background:none;border:none;
   color:var(--text-dim);
   font-family:var(--serif);
   font-size:13px;
-  letter-spacing:0.1em;
+  letter-spacing:0.2em;
   cursor:pointer;
-  padding:8px 16px;
   transition:color 0.3s ease;
+  z-index:10;
 }
-
-.media-nav button:hover{color:var(--text)}
-
-.media-dots{
-  display:flex;
-  gap:8px;
+.media-stage-close:hover{color:var(--text)}
+.media-stage-video{
+  max-width:90vw;
+  max-height:80vh;
+  box-shadow:0 20px 60px rgba(0,0,0,0.6);
 }
-
-.media-dots .dot{
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:var(--text-faint);
-  cursor:pointer;
-  transition:background 0.3s ease;
+.media-stage-info{
+  position:absolute;
+  bottom:40px;
+  left:50%;
+  transform:translateX(-50%);
+  text-align:center;
+  pointer-events:none;
 }
-
-.media-dots .dot.active{background:var(--accent)}
+.media-stage-info .title{
+  font-family:var(--serif);
+  font-size:22px;
+  font-weight:300;
+  color:var(--text);
+  letter-spacing:0.08em;
+  margin-bottom:6px;
+}
+.media-stage-info .meta{
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--text-faint);
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+}
 
 /* ========== ABOUT ========== */
 .about-wrap{
@@ -1019,27 +1045,353 @@ body{
 }
 
 /* ========== 响应式 ========== */
+/* ========== ART Detail Overlay ========== */
+.art-overlay{
+  position:fixed;
+  inset:0;
+  z-index:200;
+  background:rgba(5,5,5,0.92);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:60px 48px;
+  opacity:0;
+  visibility:hidden;
+  transition:opacity 0.4s ease,visibility 0.4s;
+}
+.art-overlay.show{opacity:1;visibility:visible}
+.art-overlay-inner{
+  max-width:900px;
+  max-height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:24px;
+  transform:translateY(20px);
+  transition:transform 0.4s cubic-bezier(0.2,0.8,0.2,1);
+}
+.art-overlay.show .art-overlay-inner{transform:translateY(0)}
+.art-overlay-img{
+  max-width:100%;
+  max-height:72vh;
+  object-fit:contain;
+  display:block;
+}
+.art-overlay-meta{
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.art-overlay-meta .title{
+  font-size:22px;
+  font-weight:300;
+  letter-spacing:0.05em;
+  color:var(--text);
+}
+.art-overlay-meta .sub{
+  font-size:12px;
+  letter-spacing:0.18em;
+  color:var(--text-dim);
+}
+.art-overlay-desc{
+  font-size:14px;
+  line-height:1.8;
+  color:var(--text-dim);
+  max-width:560px;
+  text-align:center;
+  white-space:pre-line;
+}
+.art-overlay-close{
+  position:absolute;
+  top:24px;
+  right:32px;
+  background:none;
+  border:none;
+  color:var(--text-dim);
+  font-size:14px;
+  letter-spacing:0.2em;
+  cursor:pointer;
+  transition:color 0.3s ease;
+  font-family:var(--serif);
+}
+.art-overlay-close:hover{color:var(--text)}
+
+/* ========== ART Side Bar (拖拽暂存区) ========== */
+.art-sidebar{
+  position:fixed;
+  right:0;
+  top:0;
+  bottom:0;
+  width:180px;
+  z-index:50;
+  background:rgba(10,10,10,0.85);
+  backdrop-filter:blur(12px) saturate(1.2);
+  -webkit-backdrop-filter:blur(12px) saturate(1.2);
+  border-left:1px solid var(--line);
+  transform:translateX(180px);
+  transition:transform 0.4s cubic-bezier(0.2,0.8,0.2,1);
+  display:flex;
+  flex-direction:column;
+  pointer-events:none;
+}
+.art-sidebar.show{
+  transform:translateX(0);
+  pointer-events:auto;
+}
+.art-sidebar.drag-over{
+  border-left-color:var(--accent);
+  box-shadow:-4px 0 24px rgba(139,0,0,0.25), inset 4px 0 12px rgba(139,0,0,0.08);
+}
+.art-sidebar.drag-over .art-sidebar-empty{
+  color:var(--accent);
+  opacity:0.8;
+}
+.art-sidebar-drop-hint{
+  display:none;
+  font-size:11px;
+  letter-spacing:0.18em;
+  color:var(--accent);
+  text-align:center;
+  padding:30px 8px;
+  animation:pulseHint 0.7s ease-in-out infinite;
+}
+.art-sidebar.drag-over .art-sidebar-drop-hint{display:block}
+.art-sidebar.drag-over .art-sidebar-empty,
+.art-sidebar.drag-over .art-sidebar-item{display:none}
+@keyframes pulseHint{
+  0%,100%{opacity:0.5}
+  50%{opacity:1}
+}
+.art-sidebar-header{
+  padding:60px 16px 16px;
+  font-size:10px;
+  letter-spacing:0.22em;
+  color:var(--text-faint);
+  text-transform:uppercase;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.art-sidebar-clear{
+  background:none;
+  border:none;
+  color:var(--text-faint);
+  font-size:9px;
+  letter-spacing:0.15em;
+  cursor:pointer;
+  font-family:var(--serif);
+  transition:color 0.3s ease;
+}
+.art-sidebar-clear:hover{color:var(--accent)}
+.art-sidebar-list{
+  flex:1;
+  overflow-y:auto;
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.art-sidebar-empty{
+  font-size:11px;
+  color:var(--text-faint);
+  text-align:center;
+  padding:40px 8px;
+  font-style:italic;
+  line-height:1.6;
+}
+.art-sidebar-item{
+  position:relative;
+  cursor:pointer;
+  transition:opacity 0.3s ease;
+  animation:slideIn 0.28s cubic-bezier(0.2,0.8,0.2,1);
+}
+.art-sidebar-item.flash::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:rgba(139,0,0,0.3);
+  animation:flashFade 0.45s ease-out forwards;
+  pointer-events:none;
+}
+@keyframes slideIn{
+  0%{opacity:0;transform:translateX(40px) scale(0.9)}
+  100%{opacity:1;transform:translateX(0) scale(1)}
+}
+@keyframes flashFade{
+  0%{opacity:1}
+  100%{opacity:0}
+}
+.art-sidebar-item.dragging-out{
+  opacity:0.5;
+  cursor:grabbing;
+}
+.art-sidebar-item.dragging-out img{
+  filter:brightness(0.6);
+}
+.art-sidebar.dragging-out-active .art-sidebar-drop-hint{
+  display:block;
+}
+.art-sidebar.dragging-out-active .art-sidebar-drop-hint{
+  color:var(--accent);
+  content:'DRAG OUT TO REMOVE';
+}
+.art-sidebar.dragging-out-active .art-sidebar-empty,
+.art-sidebar.dragging-out-active .art-sidebar-item:not(.dragging-out){
+  opacity:0.2;
+}
+.art-sidebar-item img{
+  width:100%;
+  display:block;
+  filter:brightness(0.9);
+  transition:filter 0.3s ease;
+}
+.art-sidebar-item:hover img{filter:brightness(1)}
+.art-sidebar-item .remove-x{
+  position:absolute;
+  top:4px;
+  right:4px;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:rgba(0,0,0,0.7);
+  color:var(--text-dim);
+  font-size:11px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  transition:opacity 0.3s ease,color 0.3s ease;
+  cursor:pointer;
+}
+.art-sidebar-item:hover .remove-x{opacity:1}
+.art-sidebar-item .remove-x:hover{color:var(--accent)}
+.art-sidebar-toggle{
+  position:fixed;
+  right:0;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:51;
+  width:28px;
+  height:60px;
+  background:rgba(10,10,10,0.85);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:1px solid var(--text-dim);
+  border-right:none;
+  color:var(--text-dim);
+  font-size:10px;
+  letter-spacing:0.1em;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  font-family:var(--serif);
+}
+.art-sidebar-toggle:hover{
+  color:var(--text);
+  border-color:var(--text);
+  box-shadow:-2px 0 12px rgba(232,224,216,0.08);
+}
+.art-sidebar-toggle .count{
+  position:absolute;
+  top:4px;
+  right:4px;
+  min-width:12px;
+  height:12px;
+  border-radius:6px;
+  background:var(--accent);
+  color:#fff;
+  font-size:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 3px;
+}
+
 @media (max-width:768px){
-  .nav{padding:0 24px}
-  .nav-menu{left:24px}
-  .nav-logo img{height:36px}
-  .section{padding:100px 24px 60px}
+  .nav{padding:0 20px;height:34px}
+  .nav-menu{left:20px}
+  .nav-logo img{height:32px}
+  .nav-actions{right:20px;gap:18px}
+  .nav-links{padding:16px 40px 16px 48px;min-width:180px}
+  .nav-links a{font-size:15px;padding:8px 0}
+  .section{padding:90px 20px 50px}
   #home{padding:0}
-  .page-text{padding:40px 28px}
-  .page-text.manifesto{font-size:clamp(22px,5vw,34px)}
-  .page-enter{padding:40px 28px}
-  .page-enter-title{font-size:clamp(26px,5vw,38px)}
-  .mag-issue{font-size:8px;gap:12px;top:16px}
-  .spread-stamp{font-size:8px;top:14px;right:14px}
-  .page-number{font-size:9px;bottom:14px;left:14px}
-  .page-products{inset:50px 24px;gap:14px 16px}
-  .product-zine-name{font-size:9px;letter-spacing:0.15em}
+  .section-label{margin-bottom:40px;flex-wrap:wrap;gap:8px}
+  .section-label .title{font-size:22px}
+  .section-label .desc{font-size:11px}
+  /* magazine */
+  .page-text{padding:36px 24px}
+  .page-text.manifesto{font-size:clamp(20px,5vw,30px)}
+  .page-enter{padding:36px 24px}
+  .page-enter-title{font-size:clamp(24px,5vw,34px)}
+  .mag-issue{font-size:8px;gap:10px;top:14px}
+  .spread-stamp{font-size:8px;top:12px;right:12px}
+  .page-number{font-size:9px;bottom:12px;left:12px}
+  .page-products{inset:44px 20px;gap:12px 14px}
+  .product-zine-name{font-size:9px;letter-spacing:0.12em}
   .product-zine-price{font-size:10px}
   .product-zine-tag{font-size:8px}
-  .art-row{flex-direction:column;padding-left:0!important}
+  .mag-nav{width:36px;height:60px}
+  .mag-nav-arrow{font-size:16px}
+  /* art */
+  .art-gallery{gap:40px}
+  .art-row{flex-direction:column;padding-left:0!important;gap:32px}
   .art-piece.s,.art-piece.m,.art-piece.l,.art-piece.xl,.art-piece.full{width:100%}
-  .product-grid{grid-template-columns:repeat(2,1fr);gap:32px 16px}
-  .about-manifesto p{font-size:18px}
+  .art-piece .art-meta{font-size:10px;gap:12px}
+  .art-sidebar,.art-sidebar-toggle{display:none}
+  .art-overlay{padding:40px 20px}
+  .art-overlay-meta .title{font-size:18px}
+  .art-overlay-desc{font-size:13px}
+  /* product */
+  .product-grid{grid-template-columns:repeat(2,1fr);gap:32px 14px}
+  .product-card .product-name{font-size:13px}
+  .product-card .product-price{font-size:11px}
+  .product-card .product-tag{font-size:9px}
+  .product-add{font-size:10px;padding:8px 14px;opacity:1!important;pointer-events:auto!important;transform:translate(-50%,0)!important}
+  .nav-links{font-size:14px}
+  .cart-badge{min-width:12px;height:12px;font-size:8px;top:-2px;right:-4px}
+  .nav-icon svg{width:16px;height:16px}
+  /* media */
+  .media-wall{columns:2;column-gap:14px}
+  .media-tile .tile-num{font-size:10px}
+  .media-tile .tile-label{font-size:8px;padding:8px 10px}
+  .media-stage-info .title{font-size:18px}
+  .media-stage-info .meta{font-size:10px}
+  .media-stage-video{max-width:95vw;max-height:70vh}
+  /* about */
+  .about-manifesto p{font-size:17px;line-height:1.9}
+  .about-manifesto p.italic{font-size:16px}
+}
+
+@media (max-width:480px){
+  .nav{padding:0 16px}
+  .nav-menu{left:16px}
+  .nav-actions{right:16px;gap:14px}
+  .nav-logo img{height:28px}
+  .section{padding:80px 16px 40px}
+  .section-label .title{font-size:20px}
+  .art-gallery{gap:32px}
+  .art-piece .art-meta{font-size:9px}
+  .product-grid{grid-template-columns:1fr;gap:28px}
+  .product-card .product-name{font-size:14px}
+  .about-manifesto p{font-size:16px}
+  .media-wall{columns:1;column-gap:0}
+  .media-tile .tile-num{font-size:9px}
+  .media-tile .tile-label{font-size:7px;padding:6px 8px}
+  .media-stage-info .title{font-size:16px}
+  .media-stage-close{top:16px;right:20px;font-size:11px}
+  .media-stage-video{max-width:100vw;max-height:65vh}
+  .nav-icon svg{width:14px;height:14px}
+  .cart-badge{min-width:10px;height:10px;font-size:7px}
+  .product-add{font-size:9px;padding:7px 12px}
+  .art-overlay{padding:30px 16px}
+  .art-overlay-close{top:16px;right:16px;font-size:12px}
 }
 </style>
 </head>
@@ -1071,6 +1423,28 @@ body{
     </button>
   </div>
 </nav>
+
+<!-- ART 详情 Overlay -->
+<div class="art-overlay" id="artOverlay" onclick="closeArtOverlay(event)">
+  <button class="art-overlay-close" onclick="closeArtOverlay()">CLOSE ×</button>
+  <div class="art-overlay-inner" id="artOverlayInner"></div>
+</div>
+
+<!-- ART Side Bar (拖拽暂存区) -->
+<button class="art-sidebar-toggle" id="artSidebarToggle" onclick="toggleArtSidebar()">
+  <span class="count" id="sidebarCount" style="display:none">0</span>
+  <span id="sidebarArrow">◀</span>
+</button>
+<aside class="art-sidebar" id="artSidebar">
+  <div class="art-sidebar-header">
+    <span>PIN BOARD</span>
+    <button class="art-sidebar-clear" onclick="clearSidebar()">CLEAR</button>
+  </div>
+  <div class="art-sidebar-list" id="artSidebarList">
+    <div class="art-sidebar-empty">Drag works here to pin</div>
+    <div class="art-sidebar-drop-hint" id="sidebarDropHint">DROP TO PIN</div>
+  </div>
+</aside>
 
 <!-- 杂志首页 (ZINE) -->
 <section id="home" class="active">
@@ -1124,6 +1498,14 @@ body{
     <div class="art-row offset-right">
       <div class="art-piece m"><img src="assets/images/untitled10.jpg" alt=""><div class="art-meta"><span class="title">untitled 10</span><span>2025</span></div></div>
     </div>
+    <div class="art-row">
+      <div class="art-piece m"><img src="assets/images/Fire.jpg" alt=""><div class="art-meta"><span class="title">FIRE</span><span>2025 · element series</span></div></div>
+      <div class="art-piece m"><img src="assets/images/earth.jpg" alt=""><div class="art-meta"><span class="title">EARTH</span><span>2025 · element series</span></div></div>
+    </div>
+    <div class="art-row offset">
+      <div class="art-piece m"><img src="assets/images/water.jpg" alt=""><div class="art-meta"><span class="title">WATER</span><span>2025 · element series</span></div></div>
+      <div class="art-piece m"><img src="assets/images/wind.jpg" alt=""><div class="art-meta"><span class="title">WIND</span><span>2025 · element series</span></div></div>
+    </div>
   </div>
 </section>
 
@@ -1134,37 +1516,61 @@ body{
     <span class="desc">available now</span>
   </div>
   <div class="product-grid">
-    <div class="product-card" data-id="fire">
+    <div class="product-card" data-id="13-ring">
       <div class="product-img">
-        <img src="assets/images/Fire.jpg" alt="">
-        <button class="product-add" onclick="addToCart('fire',event)">＋ ADD</button>
+        <img src="assets/images/13ring.png" alt="">
+        <button class="product-add" onclick="addToCart('13-ring',event)">＋ ADD</button>
       </div>
-      <div class="product-info"><span class="product-name">FIRE</span><span class="product-price">¥ TBA</span></div>
-      <div class="product-tag">— element series</div>
+      <div class="product-info"><span class="product-name">13 RING</span><span class="product-price">¥ TBA</span></div>
+      <div class="product-tag">— accessory</div>
     </div>
-    <div class="product-card" data-id="earth">
+    <div class="product-card" data-id="13-ring-2">
       <div class="product-img">
-        <img src="assets/images/earth.jpg" alt="">
-        <button class="product-add" onclick="addToCart('earth',event)">＋ ADD</button>
+        <img src="assets/images/13-ring-2.jpg" alt="">
+        <button class="product-add" onclick="addToCart('13-ring-2',event)">＋ ADD</button>
       </div>
-      <div class="product-info"><span class="product-name">EARTH</span><span class="product-price">¥ TBA</span></div>
-      <div class="product-tag">— element series</div>
+      <div class="product-info"><span class="product-name">13 RING II</span><span class="product-price">¥ TBA</span></div>
+      <div class="product-tag">— accessory</div>
     </div>
-    <div class="product-card" data-id="water">
+    <div class="product-card" data-id="13atm-tshirt">
       <div class="product-img">
-        <img src="assets/images/water.jpg" alt="">
-        <button class="product-add" onclick="addToCart('water',event)">＋ ADD</button>
+        <img src="assets/images/13atm-tshirt.png" alt="">
+        <button class="product-add" onclick="addToCart('13atm-tshirt',event)">＋ ADD</button>
       </div>
-      <div class="product-info"><span class="product-name">WATER</span><span class="product-price">¥ TBA</span></div>
-      <div class="product-tag">— element series</div>
+      <div class="product-info"><span class="product-name">13ATM TEE</span><span class="product-price">¥ TBA</span></div>
+      <div class="product-tag">— clothing</div>
     </div>
-    <div class="product-card" data-id="wind">
+    <div class="product-card" data-id="art-bag">
       <div class="product-img">
-        <img src="assets/images/wind.jpg" alt="">
-        <button class="product-add" onclick="addToCart('wind',event)">＋ ADD</button>
+        <img src="assets/images/art-bag.jpg" alt="">
+        <button class="product-add" onclick="addToCart('art-bag',event)">＋ ADD</button>
       </div>
-      <div class="product-info"><span class="product-name">WIND</span><span class="product-price">¥ TBA</span></div>
-      <div class="product-tag">— element series</div>
+      <div class="product-info"><span class="product-name">ART BAG</span><span class="product-price">¥ TBA</span></div>
+      <div class="product-tag">— bag</div>
+    </div>
+    <div class="product-card" data-id="bam-bag">
+      <div class="product-img">
+        <img src="assets/images/bam-bag.jpg" alt="">
+        <button class="product-add" onclick="addToCart('bam-bag',event)">＋ ADD</button>
+      </div>
+      <div class="product-info"><span class="product-name">BAM BAG</span><span class="product-price">¥ TBA</span></div>
+      <div class="product-tag">— bag</div>
+    </div>
+    <div class="product-card" data-id="bam-hat">
+      <div class="product-img">
+        <img src="assets/images/bam-hat.jpg" alt="">
+        <button class="product-add" onclick="addToCart('bam-hat',event)">＋ ADD</button>
+      </div>
+      <div class="product-info"><span class="product-name">BAM HAT</span><span class="product-price">¥ TBA</span></div>
+      <div class="product-tag">— accessory</div>
+    </div>
+    <div class="product-card" data-id="polar-fleece">
+      <div class="product-img">
+        <img src="assets/images/polar-fleece.jpg" alt="">
+        <button class="product-add" onclick="addToCart('polar-fleece',event)">＋ ADD</button>
+      </div>
+      <div class="product-info"><span class="product-name">POLAR FLEECE</span><span class="product-price">¥ TBA</span></div>
+      <div class="product-tag">— clothing</div>
     </div>
   </div>
 </section>
@@ -1173,37 +1579,46 @@ body{
 <section id="media" class="section">
   <div class="section-label">
     <span class="title">MEDIA</span>
-    <span class="desc">moving images</span>
+    <span class="desc">film archive</span>
   </div>
-  <div class="media-stage">
-    <div class="media-viewer">
-      <div class="media-slide active">
-        <video muted loop playsinline autoplay src="assets/video/13AM_boost.mp4"></video>
-      </div>
-      <div class="media-slide">
-        <video muted loop playsinline src="assets/video/13AM_merge.mp4"></video>
-      </div>
-      <div class="media-slide">
-        <video muted loop playsinline src="assets/video/13AM_snap.mp4"></video>
-      </div>
+  <div class="media-wall" id="mediaWall">
+    <div class="media-tile" data-title="BOOST" data-meta="2025 · SS lookbook">
+      <video muted loop playsinline src="assets/video/13AM_boost.mp4"></video>
+      <span class="tile-num">001</span>
+      <span class="tile-label">BOOST</span>
     </div>
-    <div class="media-caption">
-      <span class="title" id="mediaTitle">BOOST</span>
-      <span class="index" id="mediaIndex">01 / 03</span>
+    <div class="media-tile" data-title="MERGE" data-meta="2025 · behind the scenes">
+      <video muted loop playsinline src="assets/video/13AM_merge.mp4"></video>
+      <span class="tile-num">002</span>
+      <span class="tile-label">MERGE</span>
     </div>
-    <div class="media-controls">
-      <div class="media-nav">
-        <button onclick="mediaPrev()">← PREV</button>
-        <button onclick="mediaNext()">NEXT →</button>
-      </div>
-      <div class="media-dots">
-        <span class="dot active" onclick="mediaGo(0)"></span>
-        <span class="dot" onclick="mediaGo(1)"></span>
-        <span class="dot" onclick="mediaGo(2)"></span>
-      </div>
+    <div class="media-tile" data-title="SNAP" data-meta="2025 · campaign cut">
+      <video muted loop playsinline src="assets/video/13AM_snap.mp4"></video>
+      <span class="tile-num">003</span>
+      <span class="tile-label">SNAP</span>
+    </div>
+    <div class="media-tile" data-title="— COMING SOON —" data-meta="2025 · unreleased">
+      <div class="tile-poster" style="background:linear-gradient(135deg, #1a1410 0%, #0a0a0a 60%, #2a0a0a 100%);display:flex;align-items:center;justify-content:center;font-family:var(--serif);color:var(--text-faint);letter-spacing:0.3em;font-size:13px;aspect-ratio:16/9;">SOON</div>
+      <span class="tile-num">004</span>
+      <span class="tile-label">UNTITLED</span>
+    </div>
+    <div class="media-tile" data-title="— COMING SOON —" data-meta="2025 · unreleased">
+      <div class="tile-poster" style="background:linear-gradient(160deg, #10101a 0%, #0a0a0a 50%, #1a1020 100%);display:flex;align-items:center;justify-content:center;font-family:var(--serif);color:var(--text-faint);letter-spacing:0.3em;font-size:13px;aspect-ratio:4/5;">SOON</div>
+      <span class="tile-num">005</span>
+      <span class="tile-label">UNTITLED</span>
     </div>
   </div>
 </section>
+
+<!-- MEDIA · 视频播放 Overlay -->
+<div class="media-stage-overlay" id="mediaStageOverlay">
+  <button class="media-stage-close" onclick="closeMediaStage()">CLOSE ×</button>
+  <video class="media-stage-video" id="mediaStageVideo" muted loop playsinline controls></video>
+  <div class="media-stage-info">
+    <div class="title" id="mediaStageTitle"></div>
+    <div class="meta" id="mediaStageMeta"></div>
+  </div>
+</div>
 
 <!-- ABOUT -->
 <section id="about" class="section">
@@ -1241,8 +1656,28 @@ function showSection(id){
   navLinks.forEach(a=>a.classList.toggle('active', a.dataset.section===id));
   navMenu.classList.remove('open');
   window.scrollTo(0,0);
-  // 媒体板块特殊处理
-  if(id==='media') playActiveMedia();
+
+  // sidebar 只在 ART 板块显示
+  const sb = document.getElementById('artSidebar');
+  const tg = document.getElementById('artSidebarToggle');
+  const isArt = (id === 'art');
+  if(isArt){
+    tg.style.display = '';
+    sb.style.display = '';
+    // 如果之前开着，恢复 open
+    if(tg.classList.contains('shifted-open')){
+      sb.classList.add('show');
+      document.getElementById('sidebarArrow').textContent = '▶';
+    }
+  } else {
+    // 保存当前 open 状态然后隐藏
+    const open = sb.classList.contains('show');
+    if(open) tg.classList.add('shifted-open');
+    else tg.classList.remove('shifted-open');
+    sb.classList.remove('show');
+    tg.style.display = 'none';
+    sb.style.display = 'none';
+  }
 }
 
 // 菜单开关
@@ -1298,8 +1733,18 @@ function addToCart(id, e){
   }
 }
 
-// 页面加载时初始化角标
-document.addEventListener('DOMContentLoaded', updateCartBadge);
+// 页面加载时初始化角标 + 产品卡片跳转
+document.addEventListener('DOMContentLoaded', ()=>{
+  updateCartBadge();
+  // 产品卡片点击跳详情页（ADD 按钮已 stopPropagation，不会触发）
+  document.querySelectorAll('.product-card').forEach(card=>{
+    const id = card.getAttribute('data-id');
+    if(!id) return;
+    card.addEventListener('click', ()=>{
+      window.location.href = 'product.html?id=' + encodeURIComponent(id);
+    });
+  });
+});
 // bfcache 返回时重算（从 cart.html 删除商品返回场景）
 window.addEventListener('pageshow', e=>{
   if(e.persisted) updateCartBadge();
@@ -1686,50 +2131,175 @@ document.addEventListener('touchend', e=>{
 // 启动
 initMagazine();
 
-// Media 轮播
-const slides = document.querySelectorAll('.media-slide');
-const videos = document.querySelectorAll('.media-slide video');
-const titles = ['BOOST','MERGE','SNAP'];
-const dots = document.querySelectorAll('.media-dots .dot');
-let mediaIdx = 0;
+/* ===== MEDIA: Pinterest 瀑布流 ===== */
+(function mediaSetup(){
+  const tiles = document.querySelectorAll('.media-tile');
+  const overlay = document.getElementById('mediaStageOverlay');
+  const stageVideo = document.getElementById('mediaStageVideo');
+  const stageTitle = document.getElementById('mediaStageTitle');
+  const stageMeta = document.getElementById('mediaStageMeta');
 
-function mediaGo(i){
-  mediaIdx = (i+slides.length)%slides.length;
-  slides.forEach((s,idx)=>s.classList.toggle('active', idx===mediaIdx));
-  dots.forEach((d,idx)=>d.classList.toggle('active', idx===mediaIdx));
-  document.getElementById('mediaTitle').textContent = titles[mediaIdx];
-  document.getElementById('mediaIndex').textContent = String(mediaIdx+1).padStart(2,'0')+' / 03';
-  playActiveMedia();
-}
-
-function mediaNext(){mediaGo(mediaIdx+1)}
-function mediaPrev(){mediaGo(mediaIdx-1)}
-
-function playActiveMedia(){
-  videos.forEach((v,idx)=>{
-    if(idx===mediaIdx) v.play().catch(()=>{});
-    else v.pause();
+  tiles.forEach(tile => {
+    const v = tile.querySelector('video');
+    // 悬停预览播放
+    tile.addEventListener('mouseenter', () => {
+      if(v){ v.play().catch(()=>{}); }
+    });
+    tile.addEventListener('mouseleave', () => {
+      if(v){ v.pause(); }
+    });
+    // 点击打开大图播放
+    tile.addEventListener('click', () => {
+      if(!v) return;
+      stageVideo.src = v.src;
+      stageTitle.textContent = tile.dataset.title;
+      stageMeta.textContent = tile.dataset.meta;
+      overlay.classList.add('show');
+      stageVideo.play().catch(()=>{});
+    });
   });
+
+  window.closeMediaStage = function(){
+    overlay.classList.remove('show');
+    stageVideo.pause();
+    stageVideo.src = '';
+  };
+
+  // 点背景关闭
+  overlay.addEventListener('click', e => {
+    if(e.target === overlay) closeMediaStage();
+  });
+  // ESC 关闭
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Escape' && overlay.classList.contains('show')) closeMediaStage();
+  });
+})();
+
+// ART 画作拖拽 + 点击详情 + sidebar 拖入
+let sidebarItems = [];
+const SIDEBAR_KEY = '13am_art_sidebar';
+
+function loadSidebar(){
+  try{ sidebarItems = JSON.parse(localStorage.getItem(SIDEBAR_KEY) || '[]'); }catch(e){ sidebarItems = []; }
+}
+function saveSidebar(){
+  localStorage.setItem(SIDEBAR_KEY, JSON.stringify(sidebarItems));
+}
+function renderSidebar(flashIdx){
+  const list = document.getElementById('artSidebarList');
+  const count = document.getElementById('sidebarCount');
+  if(sidebarItems.length === 0){
+    list.innerHTML = '<div class="art-sidebar-empty">Drag works here to pin</div><div class="art-sidebar-drop-hint">DROP TO PIN</div>';
+    count.style.display = 'none';
+    return;
+  }
+  count.style.display = 'flex';
+  count.textContent = sidebarItems.length;
+  list.innerHTML = sidebarItems.map((item, i)=>{
+    const flash = (flashIdx === i) ? ' flash' : '';
+    return `<div class="art-sidebar-item${flash}" onclick="openArtOverlayById('${item.id}')">
+      <img src="${item.thumb}" alt="${item.title}">
+      <div class="remove-x" onclick="event.stopPropagation();removeSidebarItem(${i})">×</div>
+    </div>`;
+  }).join('');
+}
+function removeSidebarItem(i){
+  sidebarItems.splice(i, 1);
+  saveSidebar();
+  renderSidebar();
+}
+function clearSidebar(){
+  sidebarItems = [];
+  saveSidebar();
+  renderSidebar();
+}
+function toggleArtSidebar(){
+  const sb = document.getElementById('artSidebar');
+  const tg = document.getElementById('artSidebarToggle');
+  const arrow = document.getElementById('sidebarArrow');
+  const open = sb.classList.toggle('show');
+  arrow.textContent = open ? '▶' : '◀';
+  if(open) tg.classList.add('shifted-open');
+  else tg.classList.remove('shifted-open');
+}
+function setSidebarOpen(open){
+  const sb = document.getElementById('artSidebar');
+  const arrow = document.getElementById('sidebarArrow');
+  if(open){
+    sb.classList.add('show');
+    arrow.textContent = '▶';
+  } else {
+    sb.classList.remove('show');
+    arrow.textContent = '◀';
+  }
+}
+function addToSidebar(piece){
+  const img = piece.querySelector('img');
+  const meta = piece.querySelector('.art-meta .title');
+  const sub = piece.querySelector('.art-meta span:last-child');
+  if(!img) return;
+  const src = img.src;
+  const title = meta ? meta.textContent : 'untitled';
+  const subText = sub ? sub.textContent : '';
+  // 去重
+  if(sidebarItems.some(s => s.thumb === src)) return;
+  const id = 'art-' + Date.now() + '-' + Math.random().toString(36).slice(2,6);
+  sidebarItems.push({id, title, sub: subText, thumb: src, full: src});
+  saveSidebar();
+  renderSidebar(sidebarItems.length - 1);
+  // 自动展开 sidebar
+  document.getElementById('artSidebar').classList.add('show');
 }
 
-// 键盘导航
-document.addEventListener('keydown', e=>{
-  if(e.key==='ArrowRight' && document.getElementById('media').classList.contains('active')) mediaNext();
-  if(e.key==='ArrowLeft' && document.getElementById('media').classList.contains('active')) mediaPrev();
-});
+// ART 详情 Overlay
+function openArtOverlay(piece){
+  const img = piece.querySelector('img');
+  const meta = piece.querySelector('.art-meta .title');
+  const sub = piece.querySelector('.art-meta span:last-child');
+  if(!img) return;
+  const inner = document.getElementById('artOverlayInner');
+  inner.innerHTML = `
+    <img class="art-overlay-img" src="${img.src}" alt="">
+    <div class="art-overlay-meta">
+      <div class="title">${meta ? meta.textContent : 'untitled'}</div>
+      <div class="sub">${sub ? sub.textContent : '2025'}</div>
+    </div>
+  `;
+  document.getElementById('artOverlay').classList.add('show');
+}
+function openArtOverlayById(id){
+  const item = sidebarItems.find(s => s.id === id);
+  if(!item) return;
+  const inner = document.getElementById('artOverlayInner');
+  inner.innerHTML = `
+    <img class="art-overlay-img" src="${item.full}" alt="">
+    <div class="art-overlay-meta">
+      <div class="title">${item.title}</div>
+      <div class="sub">${item.sub || ''}</div>
+    </div>
+  `;
+  document.getElementById('artOverlay').classList.add('show');
+}
+function closeArtOverlay(e){
+  if(e && e.target !== e.currentTarget && !e.target.classList.contains('art-overlay-close')) return;
+  document.getElementById('artOverlay').classList.remove('show');
+}
 
-// ART 画作拖拽（鼠标 + 触摸）
 (function(){
+  loadSidebar();
+  renderSidebar();
+
   const pieces = document.querySelectorAll('.art-piece');
   let drag = null;
+  const sidebar = document.getElementById('artSidebar');
 
   function getPoint(e){
     if(e.touches && e.touches[0]) return {x:e.touches[0].clientX, y:e.touches[0].clientY};
+    if(e.changedTouches && e.changedTouches[0]) return {x:e.changedTouches[0].clientX, y:e.changedTouches[0].clientY};
     return {x:e.clientX, y:e.clientY};
   }
 
   function start(e, piece){
-    // 排除链接点击
     e.preventDefault();
     const p = getPoint(e);
     const cs = getComputedStyle(piece);
@@ -1741,9 +2311,21 @@ document.addEventListener('keydown', e=>{
       startY: p.y,
       baseTx: tx,
       baseTy: ty,
-      moved: false
+      moved: false,
+      sbWasOpen: sidebar.classList.contains('show')
     };
     piece.classList.add('dragging');
+  }
+
+  function getSidebarZone(){
+    const sbRect = sidebar.getBoundingClientRect();
+    const toggle = document.getElementById('artSidebarToggle');
+    const tgRect = toggle.getBoundingClientRect();
+    const left = Math.min(sbRect.left, tgRect.left, window.innerWidth - 180);
+    const right = window.innerWidth;
+    const top = Math.min(sbRect.top, tgRect.top);
+    const bottom = Math.max(sbRect.bottom, tgRect.bottom);
+    return {left, right, top, bottom};
   }
 
   function move(e){
@@ -1751,17 +2333,47 @@ document.addEventListener('keydown', e=>{
     const p = getPoint(e);
     const dx = p.x - drag.startX;
     const dy = p.y - drag.startY;
-    if(Math.abs(dx) > 2 || Math.abs(dy) > 2) drag.moved = true;
+    if(Math.abs(dx) > 3 || Math.abs(dy) > 3) drag.moved = true;
     drag.piece.style.setProperty('--tx', drag.baseTx + dx + 'px');
     drag.piece.style.setProperty('--ty', drag.baseTy + dy + 'px');
+
+    const zone = getSidebarZone();
+    const inSidebar = (p.x >= zone.left && p.x <= zone.right && p.y >= zone.top && p.y <= zone.bottom);
+    if(inSidebar){
+      setSidebarOpen(true);
+      sidebar.classList.add('drag-over');
+    } else {
+      sidebar.classList.remove('drag-over');
+      // 如果拖拽前 sidebar 是关的，拖出区域就关掉
+      if(!drag.sbWasOpen) setSidebarOpen(false);
+    }
   }
 
-  function end(){
+  function end(e){
     if(!drag) return;
     drag.piece.classList.remove('dragging');
-    // 拖动过的作品提升 z-index，让它停在上方
-    if(drag.moved){
-      drag.piece.style.zIndex = (10 + Math.floor(Math.random()*5));
+    sidebar.classList.remove('drag-over');
+
+    if(!drag.moved){
+      // 没拖动 → 恢复 sidebar 原状态
+      setSidebarOpen(drag.sbWasOpen);
+      // 点击 → 打开详情
+      openArtOverlay(drag.piece);
+    } else {
+      const p = getPoint(e);
+      const zone = getSidebarZone();
+      const inSidebar = (p.x >= zone.left && p.x <= zone.right && p.y >= zone.top && p.y <= zone.bottom);
+      if(inSidebar){
+        addToSidebar(drag.piece);
+        drag.piece.style.setProperty('--tx','0px');
+        drag.piece.style.setProperty('--ty','0px');
+        // 加入了 sidebar，保持打开
+        setSidebarOpen(true);
+      } else {
+        drag.piece.style.zIndex = (10 + Math.floor(Math.random()*5));
+        // 没加入，恢复原状态
+        setSidebarOpen(drag.sbWasOpen);
+      }
     }
     drag = null;
   }
@@ -1771,11 +2383,120 @@ document.addEventListener('keydown', e=>{
     piece.addEventListener('touchstart', e => start(e, piece), {passive:false});
   });
 
+  // sidebar item 拖出移除
+  let sbDrag = null;
+
+  function sbStart(e, item){
+    if(e.target.classList.contains('remove-x')) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const p = getPoint(e);
+    const rect = item.getBoundingClientRect();
+    sbDrag = {
+      item,
+      idx: Array.from(item.parentElement.querySelectorAll('.art-sidebar-item')).indexOf(item),
+      offsetX: p.x - rect.left,
+      offsetY: p.y - rect.top,
+      startX: p.x,
+      startY: p.y,
+      moved: false,
+      ghost: null
+    };
+    item.classList.add('dragging-out');
+    sidebar.classList.add('dragging-out-active');
+  }
+
+  function sbMove(e){
+    if(!sbDrag) return;
+    const p = getPoint(e);
+    const dx = p.x - sbDrag.startX;
+    const dy = p.y - sbDrag.startY;
+    if(Math.abs(dx) > 3 || Math.abs(dy) > 3) sbDrag.moved = true;
+
+    if(sbDrag.moved){
+      // 创建 ghost 跟随鼠标
+      if(!sbDrag.ghost){
+        const img = sbDrag.item.querySelector('img');
+        sbDrag.ghost = document.createElement('div');
+        sbDrag.ghost.style.css = 'position:fixed;pointer-events:none;z-index:999;width:80px;height:80px;opacity:0.85;';
+        sbDrag.ghost.style.position = 'fixed';
+        sbDrag.ghost.style.pointerEvents = 'none';
+        sbDrag.ghost.style.zIndex = '999';
+        sbDrag.ghost.style.width = '80px';
+        sbDrag.ghost.style.height = '80px';
+        sbDrag.ghost.style.opacity = '0.85';
+        sbDrag.ghost.style.border = '1px solid #8b0000';
+        sbDrag.ghost.style.boxShadow = '0 4px 20px rgba(0,0,0,0.5)';
+        sbDrag.ghost.style.background = '#0a0a0a';
+        const ghostImg = img.cloneNode();
+        ghostImg.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+        sbDrag.ghost.appendChild(ghostImg);
+        document.body.appendChild(sbDrag.ghost);
+      }
+      sbDrag.ghost.style.left = (p.x - 40) + 'px';
+      sbDrag.ghost.style.top = (p.y - 40) + 'px';
+
+      const sbRect = sidebar.getBoundingClientRect();
+      const outside = p.x < sbRect.left || p.x > sbRect.right || p.y < sbRect.top || p.y > sbRect.bottom;
+      if(outside){
+        sbDrag.ghost.style.opacity = '0.4';
+        sbDrag.ghost.style.borderColor = '#8b0000';
+        sidebar.classList.remove('dragging-out-active');
+      } else {
+        sbDrag.ghost.style.opacity = '0.85';
+        sidebar.classList.add('dragging-out-active');
+      }
+    }
+  }
+
+  function sbEnd(e){
+    if(!sbDrag) return;
+    const p = getPoint(e);
+    const sbRect = sidebar.getBoundingClientRect();
+    const outside = p.x < sbRect.left || p.x > sbRect.right || p.y < sbRect.top || p.y > sbRect.bottom;
+
+    if(sbDrag.ghost) sbDrag.ghost.remove();
+    sbDrag.item.classList.remove('dragging-out');
+    sidebar.classList.remove('dragging-out-active');
+
+    if(sbDrag.moved && outside){
+      removeSidebarItem(sbDrag.idx);
+    }
+    // 阻止 click 事件（防止打开 overlay）
+    if(sbDrag.moved){
+      const blocker = (ev) => { ev.preventDefault(); ev.stopPropagation(); document.removeEventListener('click', blocker, true); };
+      document.addEventListener('click', blocker, true);
+    }
+    sbDrag = null;
+  }
+
+  // 用事件委托绑定 sidebar item
+  const sbList = document.getElementById('artSidebarList');
+  sbList.addEventListener('mousedown', e => {
+    const item = e.target.closest('.art-sidebar-item');
+    if(item) sbStart(e, item);
+  });
+  sbList.addEventListener('touchstart', e => {
+    const item = e.target.closest('.art-sidebar-item');
+    if(item) sbStart(e, item);
+  }, {passive:false});
+
+  document.addEventListener('mousemove', sbMove);
+  document.addEventListener('touchmove', sbMove, {passive:false});
+  document.addEventListener('mouseup', sbEnd);
+  document.addEventListener('touchend', sbEnd);
+  document.addEventListener('touchcancel', sbEnd);
+
   document.addEventListener('mousemove', move);
   document.addEventListener('touchmove', move, {passive:false});
   document.addEventListener('mouseup', end);
   document.addEventListener('touchend', end);
   document.addEventListener('touchcancel', end);
+
+  // ESC 关闭 overlay
+  document.addEventListener('keydown', e=>{
+    if(e.key === 'Escape') closeArtOverlay();
+  });
 })();
 
 // 根据 URL hash 自动跳转板块

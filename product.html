@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base href="./">
+<title>Product — 13AM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Noto+Serif+SC:wght@300;400;500;700&family=Sacramento&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0a;
+  --bg-soft:#121010;
+  --text:#e8e0d8;
+  --text-dim:#6a655f;
+  --text-faint:#3a3530;
+  --line:#1f1c18;
+  --accent:#8b0000;
+  --serif:'Fraunces','Noto Serif SC',serif;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--serif);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--accent);color:var(--bg)}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+
+/* 顶部条 */
+.topbar{
+  position:fixed;
+  top:0;left:0;right:0;
+  z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 48px;
+  height:34px;
+  background:rgba(180,180,180,0.05);
+  backdrop-filter:blur(12px) saturate(1.2);
+  -webkit-backdrop-filter:blur(12px) saturate(1.2);
+  overflow:visible;
+}
+.back-btn{
+  position:absolute;
+  left:48px;
+  top:50%;
+  transform:translateY(-50%);
+  background:none;
+  border:none;
+  color:var(--text-dim);
+  font-family:var(--serif);
+  font-size:13px;
+  letter-spacing:0.1em;
+  cursor:pointer;
+  padding:6px 0;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  transition:color 0.3s ease;
+}
+.back-btn:hover{color:var(--text)}
+.back-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.topbar-title{
+  position:absolute;
+  right:48px;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:13px;
+  letter-spacing:0.25em;
+  color:var(--text-dim);
+  font-weight:300;
+}
+.topbar-logo{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  cursor:pointer;
+}
+.topbar-logo img{
+  height:46px;
+  width:auto;
+  opacity:0.85;
+  transition:opacity 0.4s ease,transform 0.4s cubic-bezier(0.2,0.8,0.2,1);
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  will-change:transform,opacity;
+}
+.topbar-logo:hover img{
+  opacity:1;
+  transform:scale(1.26);
+}
+
+/* 主体 */
+.wrap{
+  max-width:1280px;
+  margin:0 auto;
+  padding:100px 48px 80px;
+}
+
+.product-layout{
+  display:grid;
+  grid-template-columns:1.35fr 1fr;
+  gap:72px;
+  align-items:flex-start;
+}
+
+/* 画廊 */
+.gallery{
+  position:sticky;
+  top:70px;
+}
+.gallery-main{
+  width:100%;
+  aspect-ratio:4/5;
+  background:var(--bg-soft);
+  overflow:hidden;
+  margin-bottom:16px;
+}
+.gallery-main img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+  display:block;
+  transition:opacity 0.5s ease;
+}
+.gallery-thumbs{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:10px;
+}
+.gallery-thumbs .thumb{
+  aspect-ratio:1;
+  background:var(--bg-soft);
+  cursor:pointer;
+  border:1px solid transparent;
+  overflow:hidden;
+  opacity:0.55;
+  transition:opacity 0.3s ease,border-color 0.3s ease;
+}
+.gallery-thumbs .thumb img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.gallery-thumbs .thumb:hover{opacity:0.85}
+.gallery-thumbs .thumb.active{
+  opacity:1;
+  border-color:var(--accent);
+}
+.gallery-note{
+  margin-top:14px;
+  font-size:11px;
+  color:var(--text-faint);
+  letter-spacing:0.12em;
+  font-style:italic;
+}
+
+/* 信息区 */
+.info{
+  padding-top:20px;
+}
+.info-tag{
+  font-size:11px;
+  letter-spacing:0.22em;
+  color:var(--accent);
+  opacity:0.75;
+  margin-bottom:18px;
+}
+.info-name{
+  font-size:56px;
+  font-weight:300;
+  letter-spacing:0.04em;
+  line-height:1;
+  margin-bottom:28px;
+  color:var(--text);
+}
+.info-short{
+  font-size:14px;
+  font-style:italic;
+  color:var(--text-dim);
+  letter-spacing:0.03em;
+  margin-bottom:32px;
+  padding-bottom:32px;
+  border-bottom:1px solid var(--line);
+}
+.info-price{
+  font-size:28px;
+  font-weight:400;
+  color:var(--text);
+  margin-bottom:36px;
+  font-feature-settings:"tnum";
+}
+.info-price .tba{
+  font-size:15px;
+  letter-spacing:0.2em;
+  color:var(--text-dim);
+  margin-left:8px;
+  font-weight:300;
+}
+
+.label{
+  display:block;
+  font-size:11px;
+  letter-spacing:0.22em;
+  color:var(--text-dim);
+  margin-bottom:14px;
+  text-transform:uppercase;
+}
+
+/* 尺码 */
+.size-row{
+  margin-bottom:32px;
+}
+.size-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  max-width:340px;
+}
+.size-grid.hidden{display:none}
+.size-btn{
+  background:none;
+  border:1px solid var(--line);
+  color:var(--text);
+  font-family:var(--serif);
+  font-size:15px;
+  padding:14px 0;
+  cursor:pointer;
+  transition:all 0.3s ease;
+  letter-spacing:0.05em;
+}
+.size-btn:hover{
+  border-color:var(--text-dim);
+}
+.size-btn.active{
+  border-color:var(--accent);
+  color:var(--accent);
+  background:rgba(139,0,0,0.06);
+}
+.size-note{
+  font-size:12px;
+  color:var(--text-faint);
+  margin-top:10px;
+  font-style:italic;
+}
+.size-empty{
+  font-size:13px;
+  color:var(--text-faint);
+  letter-spacing:0.05em;
+  font-style:italic;
+}
+
+/* 数量 */
+.qty-row{
+  margin-bottom:32px;
+}
+.qty-box{
+  display:inline-flex;
+  align-items:center;
+  border:1px solid var(--line);
+}
+.qty-btn{
+  background:none;
+  border:none;
+  color:var(--text-dim);
+  width:48px;
+  height:48px;
+  cursor:pointer;
+  font-family:var(--serif);
+  font-size:20px;
+  transition:color 0.3s ease,background 0.3s ease;
+}
+.qty-btn:hover{color:var(--text);background:var(--bg-soft)}
+.qty-num{
+  min-width:40px;
+  text-align:center;
+  font-size:16px;
+  color:var(--text);
+  font-feature-settings:"tnum";
+}
+
+/* 加购按钮 */
+.add-btn{
+  width:100%;
+  padding:20px;
+  background:var(--text);
+  color:var(--bg);
+  border:none;
+  font-family:var(--serif);
+  font-size:14px;
+  letter-spacing:0.3em;
+  cursor:pointer;
+  transition:all 0.4s cubic-bezier(0.2,0.8,0.2,1);
+  margin-bottom:36px;
+}
+.add-btn:hover{
+  background:var(--accent);
+  color:var(--bg);
+  letter-spacing:0.38em;
+}
+.add-btn.added{
+  background:var(--accent);
+  color:#fff;
+  letter-spacing:0.3em;
+}
+
+/* 描述 */
+.desc-row{
+  margin-bottom:40px;
+}
+.desc-text{
+  font-size:14px;
+  line-height:2;
+  color:var(--text-dim);
+  white-space:pre-line;
+  letter-spacing:0.02em;
+}
+
+/* 底部操作 */
+.bottom-links{
+  padding-top:28px;
+  border-top:1px solid var(--line);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.back-shop{
+  color:var(--text-dim);
+  text-decoration:none;
+  font-size:12px;
+  letter-spacing:0.2em;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  transition:color 0.3s ease;
+}
+.back-shop svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.back-shop:hover{color:var(--text)}
+.view-more{
+  color:var(--text-dim);
+  text-decoration:none;
+  font-size:12px;
+  letter-spacing:0.2em;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  transition:color 0.3s ease;
+}
+.view-more svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.view-more:hover{color:var(--text)}
+
+/* 加载中 */
+.loading{
+  text-align:center;
+  padding:160px 24px;
+  color:var(--text-faint);
+  font-size:13px;
+  letter-spacing:0.2em;
+}
+.not-found{
+  text-align:center;
+  padding:160px 24px;
+}
+.not-found .big{
+  font-size:64px;
+  font-weight:300;
+  color:var(--text-faint);
+  margin-bottom:16px;
+}
+.not-found .small{
+  font-size:13px;
+  letter-spacing:0.15em;
+  color:var(--text-dim);
+  margin-bottom:32px;
+}
+.not-found a{
+  display:inline-block;
+  padding:12px 32px;
+  border:1px solid var(--line);
+  color:var(--text);
+  text-decoration:none;
+  font-size:13px;
+  letter-spacing:0.15em;
+  transition:all 0.3s ease;
+}
+.not-found a:hover{border-color:var(--accent);color:var(--accent)}
+
+@media (max-width:960px){
+  .product-layout{grid-template-columns:1fr;gap:48px}
+  .gallery{position:static}
+  .info{padding-top:0}
+}
+@media (max-width:768px){
+  .topbar{padding:0 20px}
+  .back-btn{left:20px;font-size:12px}
+  .topbar-title{right:20px;font-size:12px}
+  .topbar-logo img{height:32px}
+  .wrap{padding:80px 20px 50px}
+  .info-name{font-size:38px}
+  .info-price{font-size:24px}
+  .size-grid{grid-template-columns:repeat(4,1fr)}
+  .gallery-thumbs{grid-template-columns:repeat(4,1fr)}
+  .add-btn{font-size:12px;letter-spacing:0.22em;padding:18px}
+  .desc-text{font-size:13px;line-height:1.9}
+}
+@media (max-width:480px){
+  .topbar{padding:0 16px}
+  .back-btn{left:16px;font-size:11px}
+  .topbar-title{right:16px;font-size:11px}
+  .topbar-logo img{height:28px}
+  .wrap{padding:70px 16px 40px}
+  .info-name{font-size:30px}
+  .info-price{font-size:20px}
+  .info-tag{font-size:10px}
+  .info-short{font-size:13px}
+  .size-btn{font-size:13px;padding:12px 0}
+  .gallery-thumbs{grid-template-columns:repeat(3,1fr)}
+  .add-btn{font-size:11px;letter-spacing:0.18em;padding:16px}
+  .bottom-links{flex-direction:column;gap:16px;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <a class="back-btn" href="index.html#product">
+    <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+    BACK
+  </a>
+  <div class="topbar-logo" onclick="location.href='index.html'">
+    <img src="assets/logo-13am.png" alt="13AM">
+  </div>
+  <span class="topbar-title">PRODUCT</span>
+</nav>
+
+<div class="wrap" id="app">
+  <div class="loading">LOADING…</div>
+</div>
+
+<script>
+const CART_KEY = '13am_cart';
+let currentProduct = null;
+let currentImage = 0;
+let selectedSize = null;
+let qty = 1;
+
+function getParam(name){
+  const m = new URLSearchParams(location.search).get(name);
+  return m ? m.trim() : null;
+}
+
+function getCart(){
+  return JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+}
+function setCart(cart){
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  // 通知其他页面
+  try{window.dispatchEvent(new CustomEvent('cart-updated'));}catch(e){}
+}
+
+async function loadProducts(){
+  const r = await fetch('products.json?_=' + Date.now());
+  if(!r.ok) throw new Error('products.json load failed');
+  const data = await r.json();
+  return (data && data.products) ? data.products : [];
+}
+
+function renderNotFound(){
+  document.getElementById('app').innerHTML = `
+    <div class="not-found">
+      <div class="big">404</div>
+      <div class="small">PRODUCT NOT FOUND</div>
+      <a href="index.html#product">← BACK TO SHOP</a>
+    </div>
+  `;
+}
+
+function renderGallery(p){
+  const gallery = p.gallery || [p.cover];
+  const thumbs = gallery.map((src,i)=>`
+    <div class="thumb ${i===currentImage?'active':''}" onclick="setImage(${i})">
+      <img src="${src}" alt="">
+    </div>
+  `).join('');
+  return `
+    <div class="gallery">
+      <div class="gallery-main">
+        <img id="mainImg" src="${gallery[currentImage]}" alt="${p.name}">
+      </div>
+      <div class="gallery-thumbs">${thumbs}</div>
+      ${p.galleryNote ? `<div class="gallery-note">${p.galleryNote}</div>` : ''}
+    </div>
+  `;
+}
+
+function renderSize(p){
+  // 只有衣服/裤子显示尺码
+  const needsSize = p.category === 'clothing' || p.category === 'pants';
+  if(!needsSize || !p.sizes || p.sizes.length === 0){
+    return `
+      <div class="size-row">
+        <span class="label">Size</span>
+        <div class="size-empty">— One size / 无尺码选项 —</div>
+      </div>
+    `;
+  }
+  const btns = p.sizes.map(s=>`
+    <button class="size-btn ${selectedSize===s?'active':''}" onclick="setSize('${s}')">${s}</button>
+  `).join('');
+  return `
+    <div class="size-row">
+      <span class="label">Size</span>
+      <div class="size-grid">${btns}</div>
+      ${p.sizeNote ? `<div class="size-note">${p.sizeNote}</div>` : ''}
+    </div>
+  `;
+}
+
+function renderInfo(p){
+  const priceDisplay = p.price > 0
+    ? `${p.currency||'¥'} ${p.price.toLocaleString()}`
+    : `<span style="color:var(--text-dim);font-size:22px;font-weight:300;">PRICE</span> <span class="tba">— TBA</span>`;
+  return `
+    <div class="info">
+      <div class="info-tag">${p.tag || ''}</div>
+      <h1 class="info-name">${p.name}</h1>
+      <div class="info-short">${p.short || ''}</div>
+      <div class="info-price">${priceDisplay}</div>
+
+      ${renderSize(p)}
+
+      <div class="qty-row">
+        <span class="label">Quantity</span>
+        <div class="qty-box">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <span class="qty-num" id="qtyNum">${qty}</span>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+      </div>
+
+      <button class="add-btn" id="addBtn" onclick="doAddToCart()">＋ ADD TO CART</button>
+
+      <div class="desc-row">
+        <span class="label">Description</span>
+        <div class="desc-text">${p.description || ''}</div>
+      </div>
+
+      <div class="bottom-links">
+        <a class="back-shop" href="index.html#product">
+          <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+          BACK TO SHOP
+        </a>
+        <a class="view-more" href="index.html#product">
+          VIEW MORE
+          <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+        </a>
+      </div>
+    </div>
+  `;
+}
+
+function renderProduct(p){
+  currentProduct = p;
+  document.title = `${p.name} — 13AM`;
+  document.getElementById('app').innerHTML = `
+    <div class="product-layout">
+      ${renderGallery(p)}
+      ${renderInfo(p)}
+    </div>
+  `;
+}
+
+function setImage(i){
+  if(!currentProduct) return;
+  const gallery = currentProduct.gallery || [currentProduct.cover];
+  if(i<0||i>=gallery.length) return;
+  currentImage = i;
+  const main = document.getElementById('mainImg');
+  if(main){
+    main.style.opacity = '0';
+    setTimeout(()=>{
+      main.src = gallery[i];
+      main.style.opacity = '1';
+    },180);
+  }
+  const thumbs = document.querySelectorAll('.gallery-thumbs .thumb');
+  thumbs.forEach((t,idx)=>t.classList.toggle('active', idx===i));
+}
+
+function setSize(s){
+  selectedSize = s;
+  if(!currentProduct) return;
+  const needsSize = currentProduct.category === 'clothing' || currentProduct.category === 'pants';
+  if(!needsSize) return;
+  const btns = document.querySelectorAll('.size-btn');
+  btns.forEach(b=>b.classList.toggle('active', b.textContent.trim()===s));
+}
+
+function changeQty(delta){
+  qty = Math.max(1, Math.min(99, qty + delta));
+  const el = document.getElementById('qtyNum');
+  if(el) el.textContent = qty;
+}
+
+function doAddToCart(){
+  if(!currentProduct) return;
+  const needsSize = currentProduct.category === 'clothing' || currentProduct.category === 'pants';
+  if(needsSize && (!currentProduct.sizes || currentProduct.sizes.length>0) && !selectedSize){
+    // 提示选尺码
+    const btn = document.getElementById('addBtn');
+    if(btn){
+      const orig = btn.textContent;
+      btn.textContent = '— SELECT A SIZE FIRST —';
+      btn.style.background = 'var(--line)';
+      btn.style.color = 'var(--accent)';
+      setTimeout(()=>{
+        btn.textContent = orig;
+        btn.style.background = '';
+        btn.style.color = '';
+      },1500);
+    }
+    return;
+  }
+  const cart = getCart();
+  const key = currentProduct.id + (selectedSize ? '::' + selectedSize : '');
+  const existing = cart.find(c => (c.id + (c.size?'::'+c.size:'')) === key);
+  if(existing){
+    existing.qty += qty;
+  } else {
+    cart.push({id:currentProduct.id, size:selectedSize||null, qty:qty});
+  }
+  setCart(cart);
+  const btn = document.getElementById('addBtn');
+  if(btn){
+    btn.classList.add('added');
+    btn.textContent = '✓ ADDED TO CART';
+    setTimeout(()=>{
+      btn.classList.remove('added');
+      btn.textContent = '＋ ADD TO CART';
+    },1600);
+  }
+}
+
+// 启动
+(async function init(){
+  const id = getParam('id');
+  try{
+    const list = await loadProducts();
+    const p = list.find(x => x.id === id);
+    if(!p){ renderNotFound(); return; }
+    renderProduct(p);
+  }catch(err){
+    console.error(err);
+    renderNotFound();
+  }
+})();
+</script>
+</body>
+</html>
