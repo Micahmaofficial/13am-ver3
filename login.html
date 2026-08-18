@@ -38,7 +38,6 @@ body{
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
 
-/* 返回 */
 .back-btn{
   position:fixed;
   top:24px;
@@ -60,7 +59,6 @@ body{
 .back-btn:hover{color:var(--text)}
 .back-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
 
-/* 表单卡片 */
 .card{
   width:100%;
   max-width:380px;
@@ -82,7 +80,6 @@ body{
   margin-bottom:48px;
 }
 
-/* tab 切换 */
 .tabs{
   display:flex;
   justify-content:center;
@@ -112,7 +109,6 @@ body{
   background:var(--accent);
 }
 
-/* 表单字段 */
 .field{
   margin-bottom:18px;
   text-align:left;
@@ -140,7 +136,6 @@ body{
 .field input::placeholder{color:var(--text-faint);font-style:italic}
 .field input:focus{border-bottom-color:var(--accent)}
 
-/* 提交按钮 */
 .submit{
   width:100%;
   margin-top:20px;
@@ -155,8 +150,8 @@ body{
   transition:all 0.3s ease;
 }
 .submit:hover{background:var(--text)}
+.submit:disabled{opacity:0.5;cursor:not-allowed}
 
-/* 切换提示 */
 .switch-hint{
   margin-top:28px;
   font-size:12px;
@@ -171,7 +166,6 @@ body{
   margin-left:6px;
 }
 
-/* 装饰签名 */
 .deco{
   margin-top:60px;
   font-family:var(--sign);
@@ -180,7 +174,17 @@ body{
   opacity:0.6;
 }
 
-/* 注册表单默认隐藏 */
+.msg{
+  margin-top:16px;
+  font-size:12px;
+  letter-spacing:0.05em;
+  min-height:16px;
+  text-align:left;
+}
+.msg.error{color:var(--accent)}
+.msg.success{color:#4a9e5c}
+.msg.info{color:var(--text-dim)}
+
 #registerForm{display:none}
 #registerForm.active{display:block}
 #loginForm.active{display:block}
@@ -208,47 +212,58 @@ body{
     <button class="tab" id="tabRegister" onclick="switchTab('register')">SIGN UP</button>
   </div>
 
-  <!-- 登录 -->
   <form id="loginForm" class="active" onsubmit="submitLogin(event)">
     <div class="field">
       <label>Email</label>
-      <input type="email" placeholder="you@13am.world" required>
+      <input type="email" id="loginEmail" placeholder="you@13am.world" required>
     </div>
     <div class="field">
       <label>Password</label>
-      <input type="password" placeholder="••••••••" required>
+      <input type="password" id="loginPassword" placeholder="••••••••" required>
     </div>
-    <button type="submit" class="submit">ENTER</button>
+    <button type="submit" class="submit" id="loginBtn">ENTER</button>
     <p class="switch-hint">No account yet?<a onclick="switchTab('register')">sign up</a></p>
+    <div class="msg" id="loginMsg"></div>
   </form>
 
-  <!-- 注册 -->
   <form id="registerForm" onsubmit="submitRegister(event)">
     <div class="field">
       <label>Name</label>
-      <input type="text" placeholder="your name" required>
+      <input type="text" id="regName" placeholder="your name" required>
     </div>
     <div class="field">
       <label>Email</label>
-      <input type="email" placeholder="you@13am.world" required>
+      <input type="email" id="regEmail" placeholder="you@13am.world" required>
     </div>
     <div class="field">
       <label>Password</label>
-      <input type="password" placeholder="••••••••" required>
+      <input type="password" id="regPassword" placeholder="min 6 characters" minlength="6" required>
     </div>
-    <button type="submit" class="submit">JOIN</button>
+    <button type="submit" class="submit" id="regBtn">JOIN</button>
     <p class="switch-hint">Already one of us?<a onclick="switchTab('login')">log in</a></p>
+    <div class="msg" id="regMsg"></div>
   </form>
 
   <div class="deco">NEE</div>
 </div>
 
+<script src="assets/js/supabase.js"></script>
 <script>
+let sbReady = false;
+
+async function ensureSupabase(){
+  if(!sbReady){
+    await window.supabaseAuth.initSupabase();
+    sbReady = true;
+  }
+}
+
 function switchTab(mode){
   const login = document.getElementById('loginForm');
   const reg = document.getElementById('registerForm');
   const tl = document.getElementById('tabLogin');
   const tr = document.getElementById('tabRegister');
+  clearMsg();
   if(mode === 'login'){
     login.classList.add('active');
     reg.classList.remove('active');
@@ -262,14 +277,64 @@ function switchTab(mode){
   }
 }
 
-function submitLogin(e){
-  e.preventDefault();
-  alert('Login flow — connect to backend.');
+function showMsg(formId, text, type){
+  const el = document.getElementById(formId + 'Msg');
+  el.textContent = text;
+  el.className = 'msg ' + (type || '');
+}
+function clearMsg(){
+  document.getElementById('loginMsg').textContent = '';
+  document.getElementById('loginMsg').className = 'msg';
+  document.getElementById('regMsg').textContent = '';
+  document.getElementById('regMsg').className = 'msg';
 }
 
-function submitRegister(e){
+async function submitLogin(e){
   e.preventDefault();
-  alert('Sign up flow — connect to backend.');
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true;
+  btn.textContent = 'SIGNING IN...';
+  showMsg('login', '', '');
+  try{
+    await ensureSupabase();
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const { user } = await window.supabaseAuth.signIn(email, password);
+    showMsg('login', 'Welcome back, ' + (user.user_metadata?.name || email.split('@')[0]) + '. Redirecting...', 'success');
+    setTimeout(()=>{
+      const params = new URLSearchParams(location.search);
+      const redirect = params.get('redirect') || 'index.html';
+      location.href = redirect;
+    }, 800);
+  } catch(err){
+    showMsg('login', err.message || '登录失败，请检查邮箱和密码', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'ENTER';
+  }
+}
+
+async function submitRegister(e){
+  e.preventDefault();
+  const btn = document.getElementById('regBtn');
+  btn.disabled = true;
+  btn.textContent = 'CREATING...';
+  showMsg('reg', '', '');
+  try{
+    await ensureSupabase();
+    const name = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const password = document.getElementById('regPassword').value;
+    if(password.length < 6){ throw new Error('密码至少 6 位'); }
+    await window.supabaseAuth.signUp(email, password, name);
+    showMsg('reg', '注册成功！请登录。', 'success');
+    setTimeout(()=>{ switchTab('login'); }, 1000);
+  } catch(err){
+    showMsg('reg', err.message || '注册失败，请稍后重试', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'JOIN';
+  }
 }
 </script>
 </body>

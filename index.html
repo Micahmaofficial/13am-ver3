@@ -1420,8 +1420,9 @@ body{
       <svg viewBox="0 0 24 24"><path d="M3 4h2l2.5 12h11l2-8h-13"/><circle cx="9" cy="20" r="1.2"/><circle cx="17" cy="20" r="1.2"/></svg>
       <span class="cart-badge" id="cartBadge">0</span>
     </button>
-    <button class="nav-icon" onclick="openAuth()" aria-label="account">
+    <button class="nav-icon" id="userIconBtn" onclick="handleAuthClick()" aria-label="account">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
+      <span class="user-name-label" id="userNameLabel" style="display:none;margin-left:6px;font-family:'Fraunces',serif;font-size:13px;font-weight:400;letter-spacing:0.1em"></span>
     </button>
   </div>
 </nav>
@@ -1701,6 +1702,45 @@ document.addEventListener('keydown', e=>{
 // 购物车 / 登录注册跳转
 function openFavorites(){ window.location.href = 'cart.html'; }
 function openAuth(){ window.location.href = 'login.html'; }
+
+function handleAuthClick(){
+  const state = window.supabaseAuth ? window.supabaseAuth.getAuthState() : { loggedIn: false };
+  if(state.loggedIn){
+    if(confirm('确定退出登录？')){
+      window.supabaseAuth.signOut().then(()=>{
+        updateUserUI();
+        location.reload();
+      }).catch(err=>alert(err.message));
+    }
+  } else {
+    openAuth();
+  }
+}
+
+async function updateUserUI(){
+  if(!window.supabaseAuth) return;
+  const state = window.supabaseAuth.getAuthState();
+  const nameLabel = document.getElementById('userNameLabel');
+  const iconBtn = document.getElementById('userIconBtn');
+  if(state.loggedIn && state.user){
+    const name = state.user.user_metadata?.name || state.user.email?.split('@')[0] || '';
+    nameLabel.textContent = name;
+    nameLabel.style.display = 'inline';
+    iconBtn.title = '点击退出登录';
+  } else {
+    nameLabel.style.display = 'none';
+    nameLabel.textContent = '';
+    iconBtn.title = '登录 / 注册';
+  }
+}
+
+async function initAuth(){
+  if(!window.supabaseAuth) return;
+  await window.supabaseAuth.initSupabase();
+  updateUserUI();
+  window.supabaseAuth.onAuthStateChange(()=>updateUserUI());
+}
+document.addEventListener('DOMContentLoaded', ()=>{ initAuth(); });
 
 // ========== 加入购物车 ==========
 const CART_KEY = '13am_cart';
@@ -2512,5 +2552,6 @@ function closeArtOverlay(e){
   window.addEventListener('hashchange', goFromHash);
 })();
 </script>
+<script src="assets/js/supabase.js"></script>
 </body>
 </html>

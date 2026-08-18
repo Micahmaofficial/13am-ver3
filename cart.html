@@ -437,5 +437,25 @@ loadProducts().then(m=>{
   render();
 });
 </script>
+<script src="assets/js/supabase.js"></script>
+<script>
+(async function(){
+  if(!window.supabaseAuth) return;
+  await window.supabaseAuth.initSupabase();
+  const state = window.supabaseAuth.getAuthState();
+  const badge = document.createElement('div');
+  badge.id = 'authBadge';
+  badge.style.cssText = 'position:fixed;top:20px;right:24px;z-index:100;font-size:12px;letter-spacing:0.1em;color:var(--text-dim);cursor:pointer;font-family:var(--serif);';
+  if(state.loggedIn && state.user){
+    const name = state.user.user_metadata?.name || state.user.email?.split('@')[0] || '';
+    badge.textContent = name + ' · 退出';
+    badge.onclick = ()=>{ if(confirm('退出登录？')){ window.supabaseAuth.signOut().then(()=>location.reload()); } };
+  } else {
+    badge.textContent = 'LOG IN';
+    badge.onclick = ()=>{ location.href = 'login.html?redirect=' + encodeURIComponent(location.pathname + location.search); };
+  }
+  document.body.appendChild(badge);
+})();
+</script>
 </body>
 </html>
