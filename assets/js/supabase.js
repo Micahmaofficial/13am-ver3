@@ -1,4 +1,4 @@
-const SUPABASE_URL = 'https://ypdgeimtytmdkzhkvel.supabase.co';
+const SUPABASE_URL = 'https://ypdgeimtytmldkzhkvel.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_hnfCLhIxrCGO-UpTZ0dY8g_L2S5hSok';
 
 let supabaseClient = null;
