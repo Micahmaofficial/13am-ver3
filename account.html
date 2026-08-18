@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base href="./">
+<title>Account — 13AM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Noto+Serif+SC:wght@300;400;500;700&family=Sacramento&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0a;
+  --bg-soft:#121010;
+  --text:#e8e0d8;
+  --text-dim:#6a655f;
+  --text-faint:#3a3530;
+  --line:#1f1c18;
+  --accent:#8b0000;
+  --serif:'Fraunces','Noto Serif SC',serif;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--serif);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--accent);color:var(--bg)}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+
+/* ===== 顶部三段式导航 ===== */
+.topbar{
+  position:fixed;
+  top:0;left:0;right:0;
+  z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 48px;
+  height:34px;
+  background:rgba(180,180,180,0.05);
+  backdrop-filter:blur(12px) saturate(1.2);
+  -webkit-backdrop-filter:blur(12px) saturate(1.2);
+  overflow:visible;
+}
+.back-btn{
+  position:absolute;
+  left:48px;
+  top:50%;
+  transform:translateY(-50%);
+  background:none;
+  border:none;
+  color:var(--text-dim);
+  font-family:var(--serif);
+  font-size:13px;
+  letter-spacing:0.1em;
+  cursor:pointer;
+  padding:6px 0;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  transition:color 0.3s ease;
+}
+.back-btn:hover{color:var(--text)}
+.back-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.topbar-title{
+  position:absolute;
+  right:48px;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:13px;
+  letter-spacing:0.25em;
+  color:var(--text-dim);
+  font-weight:300;
+}
+.topbar-logo{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  cursor:pointer;
+}
+.topbar-logo img{
+  height:46px;
+  width:auto;
+  opacity:0.85;
+  transition:opacity 0.4s ease,transform 0.4s cubic-bezier(0.2,0.8,0.2,1);
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  will-change:transform,opacity;
+}
+.topbar-logo:hover img{
+  opacity:1;
+  transform:scale(1.26);
+}
+
+/* ===== 主体 ===== */
+.wrap{
+  max-width:960px;
+  margin:0 auto;
+  padding:140px 48px 80px;
+}
+
+.page-label{
+  display:flex;
+  align-items:baseline;
+  gap:16px;
+  margin-bottom:60px;
+  padding-bottom:20px;
+  border-bottom:1px solid var(--line);
+}
+.page-label .num{
+  font-size:12px;
+  color:var(--text-faint);
+  letter-spacing:0.1em;
+}
+.page-label .title{
+  font-size:32px;
+  font-weight:400;
+  letter-spacing:0.04em;
+}
+.page-label .desc{
+  font-size:12px;
+  color:var(--text-dim);
+  letter-spacing:0.1em;
+  margin-left:auto;
+  font-style:italic;
+}
+
+/* ===== 卡片通用 ===== */
+.card{
+  background:var(--bg-soft);
+  border:1px solid var(--line);
+  padding:40px;
+  margin-bottom:28px;
+  position:relative;
+}
+.card-h{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  margin-bottom:28px;
+  padding-bottom:16px;
+  border-bottom:1px solid var(--line);
+}
+.card-h h2{
+  font-size:20px;
+  font-weight:400;
+  letter-spacing:0.08em;
+}
+.card-h .tag{
+  font-size:11px;
+  letter-spacing:0.2em;
+  color:var(--text-faint);
+  text-transform:uppercase;
+}
+
+/* ===== 基础信息 ===== */
+.profile{
+  display:flex;
+  align-items:center;
+  gap:28px;
+}
+.avatar{
+  width:96px;
+  height:96px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#1a1514,#2a1d1b);
+  border:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:var(--serif);
+  font-size:36px;
+  font-weight:300;
+  color:var(--text-dim);
+  letter-spacing:0;
+  flex-shrink:0;
+  overflow:hidden;
+  position:relative;
+}
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.profile-info{
+  flex:1;
+  min-width:0;
+}
+.profile-info .name{
+  font-size:26px;
+  font-weight:500;
+  letter-spacing:0.04em;
+  margin-bottom:6px;
+}
+.profile-info .email{
+  font-size:13px;
+  color:var(--text-dim);
+  letter-spacing:0.06em;
+  margin-bottom:8px;
+}
+.profile-info .extras{
+  margin-top:6px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px 18px;
+}
+.profile-info .extras span{
+  font-size:12px;
+  color:var(--text-dim);
+  letter-spacing:0.06em;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.profile-info .extras span b{
+  color:var(--text);
+  font-weight:400;
+}
+.profile-info .meta{
+  margin-top:10px;
+  font-size:11px;
+  letter-spacing:0.16em;
+  color:var(--text-faint);
+  text-transform:uppercase;
+}
+
+/* ===== 订单占位 ===== */
+.order-empty{
+  text-align:center;
+  padding:60px 24px 40px;
+}
+.order-empty .icon{
+  width:48px;height:48px;
+  margin:0 auto 20px;
+  opacity:0.3;
+  stroke:var(--text);fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;
+}
+.order-empty .msg{
+  font-size:15px;
+  color:var(--text-dim);
+  font-style:italic;
+  margin-bottom:6px;
+}
+.order-empty .sub{
+  font-size:12px;
+  color:var(--text-faint);
+  letter-spacing:0.1em;
+}
+
+/* ===== 购物车入口 ===== */
+.cart-entry{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:24px 0;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  gap:20px;
+}
+.cart-entry .left{
+  display:flex;
+  align-items:center;
+  gap:18px;
+  min-width:0;
+}
+.cart-entry .left svg{
+  width:36px;height:36px;
+  stroke:var(--text-dim);fill:none;stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round;
+  flex-shrink:0;
+}
+.cart-entry .left .txt .main{
+  font-size:16px;
+  font-weight:500;
+  letter-spacing:0.04em;
+  margin-bottom:4px;
+}
+.cart-entry .left .txt .sub{
+  font-size:12px;
+  color:var(--text-dim);
+  letter-spacing:0.08em;
+}
+.cart-entry .count{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:22px;
+  height:22px;
+  padding:0 6px;
+  border-radius:11px;
+  background:var(--accent);
+  color:#fff;
+  font-size:11px;
+  letter-spacing:0;
+  margin-left:6px;
+}
+.cart-entry a.btn{
+  display:inline-block;
+  padding:12px 28px;
+  border:1px solid var(--text-faint);
+  color:var(--text);
+  text-decoration:none;
+  font-size:12px;
+  letter-spacing:0.2em;
+  transition:all 0.3s ease;
+  flex-shrink:0;
+}
+.cart-entry a.btn:hover{
+  border-color:var(--accent);
+  color:var(--accent);
+}
+
+/* ===== 编辑模式 ===== */
+.edit-btn{
+  background:none;
+  border:none;
+  color:var(--text-faint);
+  font-family:var(--serif);
+  font-size:11px;
+  letter-spacing:0.2em;
+  cursor:pointer;
+  padding:4px 10px;
+  transition:color 0.3s ease;
+  text-transform:uppercase;
+}
+.edit-btn:hover{ color:var(--accent); }
+.edit-form{
+  margin-top:18px;
+  padding-top:22px;
+  border-top:1px solid var(--line);
+  display:none;
+  animation:fadein 0.3s ease;
+}
+.edit-form.open{ display:block; }
+@keyframes fadein{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.field{
+  margin-bottom:16px;
+}
+.field label{
+  display:block;
+  font-size:11px;
+  letter-spacing:0.18em;
+  color:var(--text-faint);
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+.field input{
+  width:100%;
+  padding:12px 14px;
+  background:var(--bg);
+  border:1px solid var(--line);
+  color:var(--text);
+  font-family:var(--serif);
+  font-size:14px;
+  letter-spacing:0.04em;
+  outline:none;
+  transition:border-color 0.3s ease;
+}
+.field select{
+  width:100%;
+  padding:12px 40px 12px 14px;
+  background:var(--bg) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M1 3l4 4 4-4' stroke='%236a655f' stroke-width='1.3' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>") no-repeat right 16px center;
+  border:1px solid var(--line);
+  color:var(--text);
+  font-family:var(--serif);
+  font-size:14px;
+  letter-spacing:0.04em;
+  outline:none;
+  appearance:none;
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  transition:border-color 0.3s ease;
+  cursor:pointer;
+}
+.field select:focus{ border-color:var(--accent); }
+.field input:focus{ border-color:var(--accent); }
+.field input[readonly]{
+  color:var(--text-dim);
+  background:transparent;
+  cursor:not-allowed;
+}
+.field input[type=file]{
+  padding:0;
+  border:none;
+  background:transparent;
+  color:var(--text-dim);
+  font-size:12px;
+}
+.field input[type=file]::file-selector-button{
+  padding:8px 14px;
+  background:transparent;
+  border:1px solid var(--line);
+  color:var(--text);
+  font-family:var(--serif);
+  font-size:11px;
+  letter-spacing:0.14em;
+  cursor:pointer;
+  margin-right:12px;
+  transition:all 0.3s ease;
+}
+.field input[type=file]::file-selector-button:hover{
+  border-color:var(--accent);
+  color:var(--accent);
+}
+
+/* 头像编辑区 */
+.avatar-edit{
+  display:flex;
+  align-items:center;
+  gap:20px;
+  padding:16px 18px;
+  background:var(--bg);
+  border:1px solid var(--line);
+  margin-bottom:20px;
+}
+.avatar-edit .avatar-mini{
+  width:64px;height:64px;
+  border-radius:50%;
+  overflow:hidden;
+  background:linear-gradient(135deg,#1a1514,#2a1d1b);
+  border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif);font-size:22px;font-weight:300;color:var(--text-dim);
+  flex-shrink:0;
+}
+.avatar-edit .avatar-mini img{ width:100%;height:100%;object-fit:cover;display:block; }
+.avatar-edit .avatar-actions{
+  flex:1;min-width:0;
+}
+.avatar-edit .avatar-actions .title{
+  font-size:12px;letter-spacing:0.16em;color:var(--text-dim);text-transform:uppercase;margin-bottom:8px;
+}
+.avatar-edit .avatar-actions .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.avatar-edit .link-btn{
+  background:none;border:none;
+  padding:8px 14px;
+  border:1px solid var(--line);
+  color:var(--text);
+  font-family:var(--serif);
+  font-size:11px;
+  letter-spacing:0.14em;
+  cursor:pointer;
+  transition:all 0.3s ease;
+}
+.avatar-edit .link-btn:hover{
+  border-color:var(--accent);
+  color:var(--accent);
+}
+.field .hint{
+  margin-top:6px;
+  font-size:11px;
+  color:var(--text-faint);
+  letter-spacing:0.06em;
+}
+.field-row{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-bottom:16px;
+}
+.field-row .cell{
+  min-width:0;
+}
+.field-row .cell label{
+  display:block;
+  font-size:11px;
+  letter-spacing:0.18em;
+  color:var(--text-faint);
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+.field-row .cell select{
+  width:100%;
+  padding:12px 40px 12px 14px;
+  background:var(--bg) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M1 3l4 4 4-4' stroke='%236a655f' stroke-width='1.3' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>") no-repeat right 16px center;
+  border:1px solid var(--line);
+  color:var(--text);
+  font-family:var(--serif);
+  font-size:14px;
+  letter-spacing:0.04em;
+  outline:none;
+  appearance:none;
+  -webkit-appearance:none;
+  transition:border-color 0.3s ease;
+  cursor:pointer;
+}
+.field-row .cell select:focus{ border-color:var(--accent); }
+.field-row .cell select:disabled{
+  opacity:0.45;
+  cursor:not-allowed;
+}
+@media (max-width:520px){
+  .field-row{ grid-template-columns:1fr; }
+}
+.edit-actions{
+  display:flex;
+  gap:12px;
+  margin-top:8px;
+}
+.edit-actions button{
+  padding:10px 22px;
+  font-family:var(--serif);
+  font-size:11px;
+  letter-spacing:0.2em;
+  cursor:pointer;
+  transition:all 0.3s ease;
+}
+.btn-save{
+  background:var(--accent);
+  border:1px solid var(--accent);
+  color:#fff;
+}
+.btn-save:hover{ background:transparent; color:var(--accent); }
+.btn-save:disabled{
+  opacity:0.5;
+  cursor:not-allowed;
+}
+.btn-cancel{
+  background:transparent;
+  border:1px solid var(--text-faint);
+  color:var(--text-dim);
+}
+.btn-cancel:hover{
+  border-color:var(--text);
+  color:var(--text);
+}
+.msg-bar{
+  margin-top:14px;
+  padding:10px 14px;
+  font-size:12px;
+  letter-spacing:0.06em;
+  display:none;
+}
+.msg-bar.ok{
+  display:block;
+  border:1px solid rgba(139,0,0,0.3);
+  color:var(--accent);
+  background:rgba(139,0,0,0.06);
+}
+.msg-bar.err{
+  display:block;
+  border:1px solid rgba(200,60,60,0.3);
+  color:#c83c3c;
+  background:rgba(200,60,60,0.06);
+}
+
+/* ===== 底部操作 ===== */
+.actions{
+  margin-top:48px;
+  display:flex;
+  gap:16px;
+  justify-content:flex-end;
+}
+.btn-outline{
+  padding:12px 28px;
+  background:transparent;
+  border:1px solid var(--text-faint);
+  color:var(--text-dim);
+  font-family:var(--serif);
+  font-size:12px;
+  letter-spacing:0.2em;
+  cursor:pointer;
+  transition:all 0.3s ease;
+}
+.btn-outline:hover{
+  border-color:var(--accent);
+  color:var(--accent);
+}
+
+/* ===== 加载态 ===== */
+.loading{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:300px;
+  color:var(--text-faint);
+  font-size:13px;
+  letter-spacing:0.2em;
+}
+.loading::after{
+  content:'';
+  display:inline-block;
+  width:12px;height:12px;
+  border:1px solid var(--text-faint);
+  border-top-color:transparent;
+  border-radius:50%;
+  margin-left:12px;
+  animation:spin 0.9s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ===== 响应式 ===== */
+@media (max-width:768px){
+  .topbar{padding:0 20px;height:32px}
+  .back-btn{left:20px;font-size:11px}
+  .topbar-title{right:20px;font-size:11px;letter-spacing:0.2em}
+  .topbar-logo img{height:40px}
+  .wrap{padding:120px 24px 60px}
+  .page-label{margin-bottom:40px;display:block}
+  .page-label .title{font-size:24px}
+  .page-label .desc{margin-left:0;margin-top:8px;display:block}
+  .card{padding:24px}
+  .profile{flex-direction:column;text-align:center}
+  .profile-info{width:100%}
+  .actions{justify-content:center;flex-wrap:wrap}
+  .cart-entry{flex-direction:column;align-items:flex-start}
+}
+@media (max-width:480px){
+  .wrap{padding:110px 16px 48px}
+  .card{padding:20px}
+  .card-h{display:block}
+  .card-h h2{font-size:16px;margin-bottom:8px}
+}
+</style>
+</head>
+<body>
+
+<!-- 顶部导航三段式 -->
+<header class="topbar">
+  <button class="back-btn" onclick="history.length>1?history.back():location.href='index.html'">
+    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    BACK
+  </button>
+  <a class="topbar-logo" href="index.html" aria-label="13AM Home">
+    <img src="assets/logo-13am.png" alt="13AM">
+  </a>
+  <div class="topbar-title">ACCOUNT</div>
+</header>
+
+<main class="wrap" id="mainContent">
+  <div class="loading">LOADING</div>
+</main>
+
+<script src="assets/js/supabase.js"></script>
+<script>
+/* ===== 工具 ===== */
+function getLocalCartCount(){
+  try{
+    const c = JSON.parse(localStorage.getItem('13am_cart') || '[]');
+    return c.reduce((s,i)=>s+ (i.qty||0),0);
+  }catch(e){ return 0; }
+}
+function escapeHtml(s){
+  return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+let currentUser = null;
+// 编辑态临时变量：保存时合并
+let editAvatarData = null; // base64 dataURL，null 表示不修改
+
+const GENDER_OPTIONS = [
+  { value: '', label: 'Prefer not to say' },
+  { value: 'M', label: '男 · Male' },
+  { value: 'F', label: '女 · Female' },
+  { value: 'X', label: '其他 · Other' }
+];
+
+/* ===== 全球地区数据：25 主流国家 → 省/州 → 主要城市 ===== */
+const GEO_DATA = {
+  CN: { name: '中国 · China', regions: {
+    '上海 Shanghai': ['Shanghai 上海市','浦东新区','黄浦区','徐汇区','静安区','长宁区','虹口区','杨浦区','闵行区','宝山区','嘉定区','松江区','青浦区','奉贤区','金山区','崇明区'],
+    '北京 Beijing': ['Beijing 北京市','东城区','西城区','朝阳区','海淀区','丰台区','石景山区','通州区','顺义区','昌平区','大兴区','房山区','门头沟区','怀柔区','平谷区','密云区','延庆区'],
+    '广东 Guangdong': ['广州市','深圳市','珠海市','佛山市','东莞市','中山市','惠州市','汕头市','江门市','湛江市','肇庆市','茂名市','揭阳市','清远市','韶关市','梅州市'],
+    '浙江 Zhejiang': ['杭州市','宁波市','温州市','绍兴市','嘉兴市','金华市','台州市','湖州市','衢州市','丽水市','舟山市'],
+    '江苏 Jiangsu': ['南京市','苏州市','无锡市','常州市','南通市','徐州市','扬州市','盐城市','镇江市','泰州市','淮安市','连云港市','宿迁市'],
+    '四川 Sichuan': ['成都市','绵阳市','德阳市','宜宾市','南充市','乐山市','泸州市','达州市','内江市','自贡市','眉山市','遂宁市','广安市','攀枝花市'],
+    '福建 Fujian': ['福州市','厦门市','泉州市','漳州市','莆田市','宁德市','龙岩市','三明市','南平市'],
+    '湖北 Hubei': ['武汉市','宜昌市','襄阳市','荆州市','黄冈市','孝感市','十堰市','黄石市','咸宁市','荆门市','恩施'],
+    '湖南 Hunan': ['长沙市','株洲市','湘潭市','衡阳市','岳阳市','常德市','邵阳市','郴州市','益阳市','永州市','娄底市','张家界市'],
+    '山东 Shandong': ['济南市','青岛市','烟台市','潍坊市','淄博市','临沂市','济宁市','威海市','德州市','泰安市','菏泽市','滨州市','聊城市','日照市','东营市'],
+    '河南 Henan': ['郑州市','洛阳市','开封市','南阳市','新乡市','安阳市','许昌市','焦作市','周口市','信阳市','商丘市','平顶山市','驻马店市','漯河市','濮阳市'],
+    '陕西 Shaanxi': ['西安市','咸阳市','宝鸡市','渭南市','榆林市','汉中市','安康市','延安市','商洛市','铜川市'],
+    '重庆 Chongqing': ['渝中区','江北区','南岸区','九龙坡区','沙坪坝区','大渡口区','北碚区','渝北区','巴南区','两江新区'],
+    '天津 Tianjin': ['和平区','河东区','河西区','南开区','河北区','红桥区','滨海新区'],
+    '香港 Hong Kong': ['香港岛 Hong Kong Island','九龙 Kowloon','新界 New Territories'],
+    '澳门 Macau': ['澳门半岛','氹仔 Taipa','路环 Coloane'],
+    '台湾 Taiwan': ['台北市 Taipei','新北市 New Taipei','台中市 Taichung','高雄市 Kaohsiung','台南市 Tainan','桃园市 Taoyuan']
+  }},
+  JP: { name: '日本 · Japan', regions: {
+    '東京 Tokyo': ['東京 23区','千代田区','中央区','港区','新宿区','渋谷区','文京区','目黒区','大田区','品川区','台東区','墨田区','江東区','練馬区','板橋区','足立区','葛飾区','江戸川区','八王子市','立川市','多摩市'],
+    '大阪 Osaka': ['大阪市','堺市','豊中市','吹田市','枚方市','茨木市','八尾市','寝屋川市','和泉市'],
+    '京都 Kyoto': ['京都市','宇治市','福知山市','舞鶴市'],
+    '神奈川 Kanagawa': ['横浜市','川崎市','相模原市','鎌倉市','藤沢市','厚木市'],
+    '愛知 Aichi': ['名古屋市','豊橋市','岡崎市','一宮市'],
+    '福岡 Fukuoka': ['福岡市','北九州市','久留米市'],
+    '北海道 Hokkaido': ['札幌市','旭川市','函館市','釧路市','帯広市'],
+    '沖縄 Okinawa': ['那覇市','宜野湾市','石垣市']
+  }},
+  KR: { name: '韩国 · Korea', regions: {
+    '首尔 Seoul': ['首尔特别市 Seoul'],
+    '釜山 Busan': ['釜山广域市 Busan'],
+    '仁川 Incheon': ['仁川广域市 Incheon'],
+    '京畿道 Gyeonggi': ['수원시 Suwon','고양시 Goyang','용인시 Yongin','부천시 Bucheon','성남시 Seongnam','안산시 Ansan','안양시 Anyang','남양주시 Namyangju'],
+    '大邱 Daegu': ['대구광역시 Daegu'],
+    '济州 Jeju': ['제주시 Jeju','서귀포시 Seogwipo']
+  }},
+  SG: { name: '新加坡 · Singapore', regions: {
+    'Singapore': ['Central','West','East','North','North-East']
+  }},
+  HK: { name: '香港 · Hong Kong SAR', regions: {
+    'Hong Kong': ['香港岛 Hong Kong Island','九龙 Kowloon','新界 New Territories']
+  }},
+  TW: { name: '台湾 · Taiwan (Province of China)', regions: {
+    '台北 Taipei': ['台北市 Taipei'],
+    '新北 New Taipei': ['新北市 New Taipei'],
+    '台中 Taichung': ['台中市 Taichung'],
+    '高雄 Kaohsiung': ['高雄市 Kaohsiung'],
+    '台南 Tainan': ['台南市 Tainan'],
+    '桃园 Taoyuan': ['桃园市 Taoyuan']
+  }},
+  US: { name: '美国 · United States', regions: {
+    'California': ['Los Angeles 洛杉矶','San Francisco 旧金山','San Jose 圣何塞','San Diego 圣地亚哥','Sacramento 萨克拉门托','Oakland 奥克兰','Anaheim 阿纳海姆','Long Beach 长滩','Santa Clara','Berkeley','Palo Alto'],
+    'New York': ['New York City 纽约市','Buffalo 布法罗','Rochester 罗切斯特','Albany 奥尔巴尼','Syracuse','Brooklyn','Queens','Manhattan','Bronx','Staten Island'],
+    'Texas': ['Houston 休斯顿','Dallas 达拉斯','Austin 奥斯汀','San Antonio 圣安东尼奥','Fort Worth 沃斯堡','El Paso 埃尔帕索'],
+    'Florida': ['Miami 迈阿密','Orlando 奥兰多','Tampa 坦帕','Jacksonville 杰克逊维尔','Fort Lauderdale'],
+    'Washington': ['Seattle 西雅图','Tacoma 塔科马','Spokane 斯波坎','Bellevue'],
+    'Illinois': ['Chicago 芝加哥','Aurora 奥罗拉'],
+    'Massachusetts': ['Boston 波士顿','Cambridge 剑桥'],
+    'Nevada': ['Las Vegas 拉斯维加斯','Reno 里诺'],
+    'Washington D.C.': ['Washington, D.C. 华盛顿']
+  }},
+  GB: { name: '英国 · United Kingdom', regions: {
+    'England 英格兰': ['London 伦敦','Manchester 曼彻斯特','Birmingham 伯明翰','Liverpool 利物浦','Leeds 利兹','Bristol 布里斯托','Cambridge 剑桥','Oxford 牛津','Brighton 布莱顿','Newcastle 纽卡斯尔','Nottingham 诺丁汉','Sheffield 谢菲尔德'],
+    'Scotland 苏格兰': ['Edinburgh 爱丁堡','Glasgow 格拉斯哥','Aberdeen 阿伯丁'],
+    'Wales 威尔士': ['Cardiff 卡迪夫','Swansea 斯旺西'],
+    'N.Ireland 北爱': ['Belfast 贝尔法斯特']
+  }},
+  CA: { name: '加拿大 · Canada', regions: {
+    'Ontario 安大略': ['Toronto 多伦多','Ottawa 渥太华','Mississauga 密西沙加','Hamilton 哈密尔顿','Waterloo 滑铁卢','London 伦敦'],
+    'British Columbia 不列颠哥伦比亚': ['Vancouver 温哥华','Victoria 维多利亚','Burnaby 本拿比','Richmond 列治文'],
+    'Quebec 魁北克': ['Montreal 蒙特利尔','Quebec City 魁北克市'],
+    'Alberta 阿尔伯塔': ['Calgary 卡尔加里','Edmonton 埃德蒙顿']
+  }},
+  AU: { name: '澳大利亚 · Australia', regions: {
+    'New South Wales': ['Sydney 悉尼','Newcastle 纽卡斯尔','Wollongong 伍伦贡'],
+    'Victoria': ['Melbourne 墨尔本','Geelong 吉朗'],
+    'Queensland': ['Brisbane 布里斯班','Gold Coast 黄金海岸','Cairns 凯恩斯'],
+    'Western Australia': ['Perth 珀斯'],
+    'South Australia': ['Adelaide 阿德莱德'],
+    'ACT': ['Canberra 堪培拉'],
+    'Tasmania': ['Hobart 霍巴特']
+  }},
+  NZ: { name: '新西兰 · New Zealand', regions: {
+    'North Island 北岛': ['Auckland 奥克兰','Wellington 惠灵顿','Hamilton 汉密尔顿','Tauranga 陶朗加','Rotorua 罗托鲁瓦'],
+    'South Island 南岛': ['Christchurch 基督城','Queenstown 皇后镇','Dunedin 达尼丁','Nelson 尼尔森']
+  }},
+  FR: { name: '法国 · France', regions: {
+    'Île-de-France 法兰西岛': ['Paris 巴黎','Boulogne-Billancourt','Saint-Denis','Versailles 凡尔赛'],
+    'Provence-Alpes 普罗旺斯': ['Marseille 马赛','Nice 尼斯','Toulon 土伦','Aix-en-Provence 艾克斯'],
+    'Auvergne-Rhône-Alpes': ['Lyon 里昂','Grenoble 格勒诺布尔','Annecy 阿讷西'],
+    'Occitanie 奥克西塔尼': ['Toulouse 图卢兹','Montpellier 蒙彼利埃'],
+    'Nouvelle-Aquitaine': ['Bordeaux 波尔多'],
+    'Bretagne 布列塔尼': ['Rennes 雷恩','Brest 布雷斯特'],
+    'Grand Est': ['Strasbourg 斯特拉斯堡']
+  }},
+  DE: { name: '德国 · Germany', regions: {
+    'Berlin': ['Berlin 柏林'],
+    'Bayern 巴伐利亚': ['München 慕尼黑','Nürnberg 纽伦堡','Augsburg 奥格斯堡'],
+    'Hamburg': ['Hamburg 汉堡'],
+    'Nordrhein-Westfalen 北威州': ['Köln 科隆','Düsseldorf 杜塞尔多夫','Dortmund 多特蒙德','Essen 埃森','Duisburg 杜伊斯堡'],
+    'Hessen 黑森': ['Frankfurt 法兰克福','Wiesbaden 威斯巴登'],
+    'Baden-Württemberg 巴登符腾堡': ['Stuttgart 斯图加特','Heidelberg 海德堡','Karlsruhe 卡尔斯鲁厄'],
+    'Sachsen 萨克森': ['Leipzig 莱比锡','Dresden 德累斯顿']
+  }},
+  IT: { name: '意大利 · Italy', regions: {
+    'Lazio 拉齐奥': ['Roma 罗马'],
+    'Lombardia 伦巴第': ['Milano 米兰','Bergamo 贝加莫','Brescia 布雷西亚','Como 科莫'],
+    'Campania 坎帕尼亚': ['Napoli 那不勒斯'],
+    'Toscana 托斯卡纳': ['Firenze 佛罗伦萨','Pisa 比萨','Siena 锡耶纳','Lucca 卢卡'],
+    'Veneto 威尼托': ['Venezia 威尼斯','Verona 维罗纳','Padova 帕多瓦'],
+    'Sicilia 西西里': ['Palermo 巴勒莫','Catania 卡塔尼亚'],
+    'Emilia-Romagna': ['Bologna 博洛尼亚']
+  }},
+  ES: { name: '西班牙 · Spain', regions: {
+    'Madrid 马德里': ['Madrid 马德里'],
+    'Catalunya 加泰罗尼亚': ['Barcelona 巴塞罗那','Tarragona'],
+    'Andalucía 安达卢西亚': ['Sevilla 塞维利亚','Málaga 马拉加','Granada 格拉纳达','Córdoba 科尔多瓦'],
+    'Valencia 瓦伦西亚': ['Valencia 瓦伦西亚','Alicante 阿利坎特'],
+    'País Vasco 巴斯克': ['Bilbao 毕尔巴鄂','San Sebastián 圣塞瓦斯蒂安'],
+    'Islas Baleares 巴利阿里': ['Palma de Mallorca 帕尔马','Ibiza 伊维萨'],
+    'Canarias 加那利': ['Las Palmas','Santa Cruz de Tenerife']
+  }},
+  PT: { name: '葡萄牙 · Portugal', regions: {
+    'Lisboa': ['Lisboa 里斯本','Sintra 辛特拉','Cascais 卡斯凯什'],
+    'Porto': ['Porto 波尔图','Braga 布拉加'],
+    'Algarve': ['Faro 法鲁','Albufeira 阿尔布费拉'],
+    'Madeira': ['Funchal 丰沙尔']
+  }},
+  NL: { name: '荷兰 · Netherlands', regions: {
+    'Noord-Holland': ['Amsterdam 阿姆斯特丹','Haarlem 哈勒姆','Zandvoort'],
+    'Zuid-Holland': ['Rotterdam 鹿特丹','Den Haag (The Hague) 海牙','Delft 代尔夫特','Leiden 莱顿'],
+    'Utrecht': ['Utrecht 乌得勒支'],
+    'Noord-Brabant': ['Eindhoven 埃因霍温','Rotterdam 鹿特丹（部分）'],
+    'Friesland': ['Leeuwarden']
+  }},
+  BE: { name: '比利时 · Belgium', regions: {
+    'Brussels': ['Brussels 布鲁塞尔'],
+    'Flanders 弗拉芒': ['Antwerpen 安特卫普','Gent 根特','Brugge 布鲁日'],
+    'Wallonia 瓦隆': ['Liège 列日','Charleroi 沙勒罗瓦']
+  }},
+  CH: { name: '瑞士 · Switzerland', regions: {
+    'Zürich': ['Zürich 苏黎世'],
+    'Genève': ['Genève 日内瓦','Lausanne 洛桑'],
+    'Basel-Stadt': ['Basel 巴塞尔'],
+    'Bern': ['Bern 伯尔尼'],
+    'Ticino': ['Lugano 卢加诺']
+  }},
+  SE: { name: '瑞典 · Sweden', regions: {
+    'Stockholm': ['Stockholm 斯德哥尔摩'],
+    'Skåne 斯科讷': ['Malmö 马尔默','Lund 隆德'],
+    'Västra Götaland': ['Göteborg 哥德堡'],
+    'Uppsala': ['Uppsala 乌普萨拉']
+  }},
+  NO: { name: '挪威 · Norway', regions: {
+    'Oslo': ['Oslo 奥斯陆'],
+    'Hordaland': ['Bergen 卑尔根'],
+    'Trøndelag': ['Trondheim 特隆赫姆'],
+    'Troms og Finnmark': ['Tromsø 特罗姆瑟']
+  }},
+  DK: { name: '丹麦 · Denmark', regions: {
+    'Hovedstaden 首都': ['København 哥本哈根','Helsingør 赫尔辛格'],
+    'Midtjylland 中日德兰': ['Aarhus 奥胡斯'],
+    'Sjælland 西兰岛': ['Roskilde']
+  }},
+  FI: { name: '芬兰 · Finland', regions: {
+    'Uusimaa': ['Helsinki 赫尔辛基','Espoo 埃斯波','Vantaa 万塔'],
+    'Pirkanmaa': ['Tampere 坦佩雷'],
+    'Finland Proper': ['Turku 图尔库'],
+    'Lapland 拉普兰': ['Rovaniemi 罗瓦涅米']
+  }},
+  RU: { name: '俄罗斯 · Russia', regions: {
+    'Moscow 莫斯科': ['Moscow 莫斯科'],
+    'St Petersburg': ['Saint Petersburg 圣彼得堡'],
+    'Far East 远东': ['Vladivostok 符拉迪沃斯托克','Khabarovsk 哈巴罗夫斯克'],
+    'Siberia 西伯利亚': ['Novosibirsk 新西伯利亚','Irkutsk 伊尔库茨克']
+  }},
+  AE: { name: '阿联酋 · UAE', regions: {
+    'Dubai 迪拜': ['Dubai 迪拜'],
+    'Abu Dhabi 阿布扎比': ['Abu Dhabi 阿布扎比'],
+    'Sharjah 沙迦': ['Sharjah 沙迦']
+  }},
+  SA: { name: '沙特 · Saudi Arabia', regions: {
+    'Riyadh 利雅得': ['Riyadh 利雅得'],
+    'Makkah 麦加': ['Jeddah 吉达','Mecca 麦加'],
+    'Madinah 麦地那': ['Medina 麦地那']
+  }},
+  TR: { name: '土耳其 · Türkiye', regions: {
+    'Istanbul 伊斯坦布尔': ['Istanbul (Europe) 欧洲区','Istanbul (Asia) 亚洲区'],
+    'Ankara 安卡拉': ['Ankara 安卡拉'],
+    'İzmir 伊兹密尔': ['İzmir 伊兹密尔'],
+    'Antalya 安塔利亚': ['Antalya 安塔利亚']
+  }},
+  IL: { name: '以色列 · Israel', regions: {
+    'Tel Aviv': ['Tel Aviv 特拉维夫','Jaffa 雅法'],
+    'Jerusalem': ['Jerusalem 耶路撒冷'],
+    'Haifa': ['Haifa 海法']
+  }},
+  IN: { name: '印度 · India', regions: {
+    'Maharashtra 马哈拉施特拉': ['Mumbai 孟买','Pune 浦那','Nagpur 那格浦尔'],
+    'Delhi 德里': ['New Delhi 新德里','Delhi 德里'],
+    'Karnataka 卡纳塔克': ['Bengaluru (Bangalore) 班加罗尔'],
+    'Tamil Nadu 泰米尔纳德': ['Chennai 金奈','Coimbatore 哥印拜陀'],
+    'West Bengal 西孟加拉': ['Kolkata (Calcutta) 加尔各答'],
+    'Gujarat 古吉拉特': ['Ahmedabad 艾哈迈达巴德','Surat 苏拉特']
+  }},
+  TH: { name: '泰国 · Thailand', regions: {
+    'Bangkok 曼谷': ['Bangkok 曼谷'],
+    'จังหวัดเชียงใหม่ Chiang Mai': ['Chiang Mai 清迈'],
+    'ชลบุรี Chonburi': ['Pattaya 芭提雅'],
+    'ภูเก็ต Phuket': ['Phuket 普吉岛'],
+    'สุราษฎร์ธานี Surat Thani': ['Koh Samui 苏梅岛']
+  }},
+  VN: { name: '越南 · Vietnam', regions: {
+    'Thành phố Hồ Chí Minh 胡志明': ['Ho Chi Minh City (Saigon)'],
+    'Hà Nội 河内': ['Hà Nội 河内'],
+    'Đà Nẵng 岘港': ['Đà Nẵng 岘港','Hội An 会安'],
+    'Khánh Hòa 庆和': ['Nha Trang 芽庄']
+  }},
+  MY: { name: '马来西亚 · Malaysia', regions: {
+    'Kuala Lumpur 吉隆坡': ['Kuala Lumpur 吉隆坡','Putrajaya 普特拉贾亚'],
+    'Selangor 雪兰莪': ['Petaling Jaya 八打灵再也','Subang Jaya 梳邦再也','Shah Alam 莎阿南'],
+    'Penang 槟城': ['George Town 乔治市'],
+    'Johor 柔佛': ['Johor Bahru 新山'],
+    'Sabah 沙巴': ['Kota Kinabalu 亚庇'],
+    'Sarawak 砂拉越': ['Kuching 古晋']
+  }},
+  ID: { name: '印度尼西亚 · Indonesia', regions: {
+    'DKI Jakarta 雅加达首都': ['Jakarta 雅加达'],
+    'Bali 巴厘岛': ['Denpasar 登巴萨','Kuta 库塔','Ubud 乌布','Seminyak 水明漾'],
+    'Jawa Timur 东爪哇': ['Surabaya 泗水','Malang 玛琅'],
+    'Jawa Barat 西爪哇': ['Bandung 万隆']
+  }},
+  PH: { name: '菲律宾 · Philippines', regions: {
+    'Metro Manila': ['Manila 马尼拉','Makati 马卡蒂','Taguig 达义','Quezon City 奎松'],
+    'Cebu': ['Cebu City 宿务'],
+    'Boracay': ['Boracay 长滩岛'],
+    'Palawan': ['Puerto Princesa 公主港','El Nido 爱妮岛']
+  }},
+  BR: { name: '巴西 · Brazil', regions: {
+    'São Paulo': ['São Paulo 圣保罗'],
+    'Rio de Janeiro': ['Rio de Janeiro 里约热内卢'],
+    'Minas Gerais': ['Belo Horizonte 贝洛奥里藏特'],
+    'Bahia': ['Salvador 萨尔瓦多'],
+    'Paraná': ['Curitiba 库里蒂巴']
+  }},
+  AR: { name: '阿根廷 · Argentina', regions: {
+    'Ciudad Autónoma de Buenos Aires': ['Buenos Aires 布宜诺斯艾利斯'],
+    'Buenos Aires Province': ['La Plata 拉普拉塔','Mar del Plata 马德普拉塔'],
+    'Córdoba': ['Córdoba 科尔多瓦']
+  }},
+  MX: { name: '墨西哥 · Mexico', regions: {
+    'Ciudad de México 墨西哥城': ['CDMX 墨西哥城'],
+    'Estado de México': ['Toluca 托卢卡'],
+    'Jalisco 哈利斯科': ['Guadalajara 瓜达拉哈拉','Puerto Vallarta 巴亚尔塔港'],
+    'Quintana Roo': ['Cancún 坎昆','Playa del Carmen 普拉亚德尔卡曼']
+  }},
+  EG: { name: '埃及 · Egypt', regions: {
+    'Cairo Governorate 开罗': ['Cairo 开罗','Giza 吉萨'],
+    'Alexandria 亚历山大': ['Alexandria 亚历山大'],
+    'Red Sea 红海省': ['Hurghada 洪加达','Sharm El-Sheikh 沙姆沙伊赫']
+  }},
+  ZA: { name: '南非 · South Africa', regions: {
+    'Gauteng 豪登': ['Johannesburg 约翰内斯堡','Pretoria 比勒陀利亚'],
+    'Western Cape 西开普': ['Cape Town 开普敦'],
+    'KwaZulu-Natal': ['Durban 德班']
+  }},
+  NG: { name: '尼日利亚 · Nigeria', regions: {
+    'Lagos 拉各斯州': ['Lagos 拉各斯'],
+    'FCT 联邦首都': ['Abuja 阿布贾']
+  }}
+};
+
+/* ===== 读取展示区的地区字符串 ===== */
+function formatRegionDisplay(loc){
+  if(!loc) return '';
+  if(typeof loc === 'string') return loc; // 兼容旧格式（纯字符串）
+  if(typeof loc === 'object'){
+    const parts = [];
+    if(loc.country_name) parts.push(loc.country_name);
+    if(loc.region) parts.push(loc.region);
+    if(loc.city) parts.push(loc.city);
+    return parts.filter(Boolean).join(' · ');
+  }
+  return '';
+}
+
+/* ===== 把地区对象写入表单 ===== */
+function applyCascadeValues(loc){
+  const cEl = document.getElementById('fCountry');
+  const rEl = document.getElementById('fState');
+  const yEl = document.getElementById('fCity');
+  if(!cEl || !rEl || !yEl) return;
+  // fill country
+  const cc = (loc && typeof loc==='object') ? (loc.country_code || '') : '';
+  cEl.value = cc;
+  refreshRegions();
+  const region = (loc && typeof loc==='object') ? (loc.region || '') : '';
+  rEl.value = region;
+  refreshCities();
+  const city = (loc && typeof loc==='object') ? (loc.city || '') : '';
+  yEl.value = city;
+}
+
+/* ===== 把表单三级值提取为对象 ===== */
+function collectCascade(){
+  const cc = document.getElementById('fCountry').value;
+  const region = document.getElementById('fState').value;
+  const city = document.getElementById('fCity').value;
+  const country_name = (GEO_DATA[cc] && GEO_DATA[cc].name) || '';
+  return { country_code: cc, country_name, region, city };
+}
+
+/* ===== 刷新"省/州"下拉 ===== */
+function refreshRegions(){
+  const cEl = document.getElementById('fCountry');
+  const rEl = document.getElementById('fState');
+  const yEl = document.getElementById('fCity');
+  if(!cEl || !rEl || !yEl) return;
+  const cc = cEl.value;
+  const regions = (cc && GEO_DATA[cc] && GEO_DATA[cc].regions) ? Object.keys(GEO_DATA[cc].regions) : [];
+  rEl.innerHTML = '<option value="">— Select state/province —</option>' +
+    regions.map(r=>`<option value="${escapeAttr(r)}">${escapeHtml(r)}</option>`).join('');
+  rEl.disabled = !cc;
+  yEl.innerHTML = '<option value="">— Select city —</option>';
+  yEl.disabled = true;
+}
+
+/* ===== 刷新"城市"下拉 ===== */
+function refreshCities(){
+  const cEl = document.getElementById('fCountry');
+  const rEl = document.getElementById('fState');
+  const yEl = document.getElementById('fCity');
+  if(!cEl || !rEl || !yEl) return;
+  const cc = cEl.value, region = rEl.value;
+  if(!cc || !region){
+    yEl.innerHTML = '<option value="">— Select city —</option>';
+    yEl.disabled = true;
+    return;
+  }
+  const cities = (GEO_DATA[cc] && GEO_DATA[cc].regions && GEO_DATA[cc].regions[region]) || [];
+  yEl.innerHTML = '<option value="">— Select city —</option>' +
+    cities.map(c=>`<option value="${escapeAttr(c)}">${escapeHtml(c)}</option>`).join('');
+  yEl.disabled = false;
+}
+
+/* ===== 渲染账户页 ===== */
+async function renderAccount(){
+  const root = document.getElementById('mainContent');
+  if(!window.supabaseAuth){
+    root.innerHTML = '<div class="empty"><div class="msg">Auth service unavailable</div></div>';
+    return;
+  }
+  await window.supabaseAuth.initSupabase();
+  const state = window.supabaseAuth.getAuthState();
+  if(!state.loggedIn || !state.user){
+    const back = encodeURIComponent('account.html');
+    location.replace('login.html?redirect='+back);
+    return;
+  }
+
+  currentUser = state.user;
+  editAvatarData = null;
+  paint();
+}
+
+/* ===== 绘制（支持重绘，编辑保存后刷新显示） ===== */
+function paint(){
+  const root = document.getElementById('mainContent');
+  const user = currentUser;
+  const md = user.user_metadata || {};
+  const name = md.name || user.email?.split('@')[0] || '13AM MEMBER';
+  const email = user.email || '';
+  const initials = (name.trim().slice(0,1) || 'U').toUpperCase();
+  const avatarUrl = md.avatar_url || '';
+  const gender = md.gender || '';
+  const region = md.region || '';
+  const phone = md.phone || '';
+  const createdAt = user.created_at ? new Date(user.created_at) : null;
+  const joinedText = createdAt ? 'MEMBER SINCE ' + createdAt.getFullYear() + '.' + String(createdAt.getMonth()+1).padStart(2,'0') : '';
+  const cartCount = getLocalCartCount();
+
+  const genderLabel = (GENDER_OPTIONS.find(o=>o.value===gender)||{label:''}).label;
+  const regionText = formatRegionDisplay(md.location || md.region); // 兼容旧数据
+  const extras = [];
+  if(genderLabel) extras.push(`<span>Gender<b>${escapeHtml(genderLabel)}</b></span>`);
+  if(regionText) extras.push(`<span>Location<b>${escapeHtml(regionText)}</b></span>`);
+  if(phone) extras.push(`<span>Phone<b>${escapeHtml(phone)}</b></span>`);
+
+  const avatarHtml = avatarUrl
+    ? `<img src="${escapeAttr(avatarUrl)}" alt="avatar">`
+    : escapeHtml(initials);
+
+  root.innerHTML = `
+    <div class="page-label">
+      <span class="title">My Account</span>
+    </div>
+
+    <!-- 基础信息 -->
+    <div class="card">
+      <div class="card-h">
+        <h2>Profile</h2>
+        <button class="edit-btn" id="editToggle" type="button">EDIT</button>
+      </div>
+      <div class="profile">
+        <div class="avatar" id="avatarEl">${avatarHtml}</div>
+        <div class="profile-info">
+          <div class="name" id="displayName">${escapeHtml(name)}</div>
+          <div class="email">${escapeHtml(email)}</div>
+          ${extras.length ? `<div class="extras">${extras.join('')}</div>` : ''}
+          <div class="meta">${joinedText}</div>
+        </div>
+      </div>
+
+      <form class="edit-form" id="editForm" onsubmit="return saveProfile(event)">
+        <!-- 头像上传区 -->
+        <div class="avatar-edit">
+          <div class="avatar-mini" id="avatarPreview">${avatarUrl ? `<img src="${escapeAttr(avatarUrl)}" alt="">` : escapeHtml(initials)}</div>
+          <div class="avatar-actions">
+            <div class="title">Avatar</div>
+            <div class="row">
+              <label class="link-btn" style="position:relative;overflow:hidden">
+                UPLOAD
+                <input id="fAvatar" type="file" accept="image/*" onchange="onAvatarFile(this)" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+              </label>
+              <button type="button" class="link-btn" id="removeAvatarBtn" onclick="removeAvatar()" ${avatarUrl?'':'disabled style="opacity:0.4;cursor:not-allowed"'}>REMOVE</button>
+            </div>
+            <div class="hint" style="margin-top:8px">JPG / PNG / WEBP, auto cropped to square, max 512px.</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="fName">Display Name</label>
+          <input id="fName" name="name" maxlength="20" value="${escapeAttr(md.name || '')}" placeholder="Your display name">
+          <div class="hint">Shown next to your avatar across the site. Max 20 characters.</div>
+        </div>
+
+        <div class="field">
+          <label for="fGender">Gender</label>
+          <select id="fGender" name="gender">
+            ${GENDER_OPTIONS.map(o=>`<option value="${o.value}" ${o.value===gender?'selected':''}>${o.label}</option>`).join('')}
+          </select>
+        </div>
+
+        <div class="field-row">
+          <div class="cell">
+            <label for="fCountry">Country / 国家</label>
+            <select id="fCountry" name="country" onchange="refreshRegions()">
+              <option value="">— Select country —</option>
+              ${Object.keys(GEO_DATA).sort((a,b)=>GEO_DATA[a].name.localeCompare(GEO_DATA[b].name,'zh-Hans-CN')).map(cc=>`<option value="${cc}">${escapeHtml(GEO_DATA[cc].name)}</option>`).join('')}
+            </select>
+          </div>
+          <div class="cell">
+            <label for="fState">State / Province / 省</label>
+            <select id="fState" name="state" onchange="refreshCities()" disabled>
+              <option value="">— Select state/province —</option>
+            </select>
+          </div>
+          <div class="cell">
+            <label for="fCity">City / 城市</label>
+            <select id="fCity" name="city" disabled>
+              <option value="">— Select city —</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="fPhone">Phone / 电话</label>
+          <input id="fPhone" name="phone" type="tel" maxlength="24" value="${escapeAttr(phone)}" placeholder="+86 ...">
+        </div>
+
+        <div class="field">
+          <label>Email</label>
+          <input value="${escapeHtml(email)}" readonly>
+          <div class="hint">Email cannot be changed here for security reasons.</div>
+        </div>
+
+        <div class="edit-actions">
+          <button class="btn-save" type="submit" id="saveBtn">SAVE</button>
+          <button class="btn-cancel" type="button" onclick="cancelEdit()">CANCEL</button>
+        </div>
+        <div class="msg-bar" id="saveMsg"></div>
+      </form>
+    </div>
+
+    <!-- 我的订单（占位） -->
+    <div class="card">
+      <div class="card-h">
+        <h2>Orders</h2>
+        <span class="tag">订单记录</span>
+      </div>
+      <div class="order-empty">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <div class="msg">No orders yet.</div>
+        <div class="sub">YOUR ORDERS WILL APPEAR HERE</div>
+      </div>
+    </div>
+
+    <!-- 购物车入口 -->
+    <div class="card">
+      <div class="card-h">
+        <h2>Cart</h2>
+        <span class="tag">购物车</span>
+      </div>
+      <div class="cart-entry">
+        <div class="left">
+          <svg viewBox="0 0 24 24"><path d="M3 4h2l2.5 12h11l2-8h-13"/><circle cx="9" cy="20" r="1.2"/><circle cx="17" cy="20" r="1.2"/></svg>
+          <div class="txt">
+            <div class="main">Shopping Cart
+              ${cartCount>0 ? `<span class="count">${cartCount}</span>` : ''}
+            </div>
+            <div class="sub">${cartCount>0 ? cartCount + ' item(s) waiting for you' : 'Your cart is empty'}</div>
+          </div>
+        </div>
+        <a class="btn" href="cart.html">VIEW CART</a>
+      </div>
+    </div>
+
+    <!-- 底部操作 -->
+    <div class="actions">
+      <button class="btn-outline" onclick="doSignOut()">SIGN OUT</button>
+    </div>
+  `;
+
+  // 绑定 EDIT 切换
+  const toggle = document.getElementById('editToggle');
+  toggle.addEventListener('click', openEdit);
+  // 初始化地区三级值（显示旧值，即使编辑态未打开）
+  applyCascadeValues(md.location || null);
+}
+
+function escapeAttr(s){
+  return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ===== 编辑态 ===== */
+function openEdit(){
+  document.getElementById('editForm').classList.add('open');
+  const btn = document.getElementById('editToggle');
+  btn.textContent = 'CLOSE';
+  btn.removeEventListener('click', openEdit);
+  btn.addEventListener('click', cancelEdit);
+  document.getElementById('fName').focus();
+}
+function cancelEdit(){
+  const f = document.getElementById('editForm');
+  if(!f) return;
+  f.classList.remove('open');
+  const msg = document.getElementById('saveMsg');
+  if(msg){ msg.className='msg-bar'; msg.textContent=''; }
+  // 重置编辑态
+  editAvatarData = null;
+  // 还原各字段
+  const md = currentUser.user_metadata || {};
+  const nameEl = document.getElementById('fName');
+  if(nameEl) nameEl.value = md.name || '';
+  const gEl = document.getElementById('fGender');
+  if(gEl) gEl.value = md.gender || '';
+  // 还原三级地区
+  applyCascadeValues(md.location || null);
+  const pEl = document.getElementById('fPhone');
+  if(pEl) pEl.value = md.phone || '';
+  const fileEl = document.getElementById('fAvatar');
+  if(fileEl) fileEl.value = '';
+  // 头像预览还原
+  const prev = document.getElementById('avatarPreview');
+  const name = md.name || currentUser.email?.split('@')[0] || 'U';
+  const initials = (name.trim().slice(0,1)||'U').toUpperCase();
+  if(prev) prev.innerHTML = md.avatar_url ? `<img src="${escapeAttr(md.avatar_url)}" alt="">` : escapeHtml(initials);
+  const rmBtn = document.getElementById('removeAvatarBtn');
+  if(rmBtn){
+    if(md.avatar_url){
+      rmBtn.disabled = false;
+      rmBtn.style.removeProperty('opacity');
+      rmBtn.style.removeProperty('cursor');
+    } else {
+      rmBtn.disabled = true;
+      rmBtn.style.opacity = '0.4';
+      rmBtn.style.cursor = 'not-allowed';
+    }
+  }
+  // 还原 toggle
+  const btn = document.getElementById('editToggle');
+  if(btn){
+    btn.textContent = 'EDIT';
+    btn.removeEventListener('click', cancelEdit);
+    btn.addEventListener('click', openEdit);
+  }
+}
+
+/* ===== 头像：选择文件 → 预览（含临时占位，save 才会写服务器） ===== */
+async function onAvatarFile(input){
+  if(!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  if(!/^image\//.test(file.type)){
+    alert('Please upload an image file.');
+    input.value = '';
+    return;
+  }
+  if(file.size > 6 * 1024 * 1024){
+    alert('Image too large. Max 6MB.');
+    input.value = '';
+    return;
+  }
+  try{
+    const dataUrl = await compressAvatar(file, 512, 0.85);
+    editAvatarData = dataUrl;
+    const prev = document.getElementById('avatarPreview');
+    if(prev) prev.innerHTML = `<img src="${escapeAttr(dataUrl)}" alt="">`;
+    const rmBtn = document.getElementById('removeAvatarBtn');
+    if(rmBtn){
+      rmBtn.disabled = false;
+      rmBtn.style.removeProperty('opacity');
+      rmBtn.style.removeProperty('cursor');
+    }
+  }catch(err){
+    alert('Image processing failed: ' + (err.message || err));
+    input.value = '';
+  }
+}
+function removeAvatar(){
+  // 两种含义：
+  //  - 如果本地正在编辑（editAvatarData 有内容），表示撤销刚上传的，回到原有值
+  //  - 如果没有本地编辑内容（即原有 md 里有 avatar），表示希望彻底删除头像
+  if(editAvatarData){
+    editAvatarData = null;
+    // 预览还原为"当前数据库里的"
+    const md = currentUser.user_metadata || {};
+    const prev = document.getElementById('avatarPreview');
+    const name = md.name || currentUser.email?.split('@')[0] || 'U';
+    const initials = (name.trim().slice(0,1)||'U').toUpperCase();
+    if(prev) prev.innerHTML = md.avatar_url ? `<img src="${escapeAttr(md.avatar_url)}" alt="">` : escapeHtml(initials);
+    // 如果原来没有头像，REMOVE 按钮回到禁用
+    const rmBtn = document.getElementById('removeAvatarBtn');
+    if(rmBtn && !md.avatar_url){
+      rmBtn.disabled = true;
+      rmBtn.style.opacity='0.4';rmBtn.style.cursor='not-allowed';
+    }
+    const fileEl = document.getElementById('fAvatar');
+    if(fileEl) fileEl.value = '';
+  } else {
+    if(!confirm('Remove your avatar? You can upload a new one anytime.')) return;
+    editAvatarData = '__REMOVE__'; // 哨兵
+    const name = (currentUser.user_metadata?.name || currentUser.email?.split('@')[0] || 'U').trim().slice(0,1).toUpperCase();
+    const prev = document.getElementById('avatarPreview');
+    if(prev) prev.innerHTML = escapeHtml(name);
+    const rmBtn = document.getElementById('removeAvatarBtn');
+    if(rmBtn){ rmBtn.disabled = true; rmBtn.style.opacity='0.4'; rmBtn.style.cursor='not-allowed'; }
+    const fileEl = document.getElementById('fAvatar');
+    if(fileEl) fileEl.value = '';
+  }
+}
+
+/* ===== 头像压缩：File → base64 dataURL ===== */
+function compressAvatar(file, maxSize=512, quality=0.85){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onerror = ()=> reject(new Error('File read failed'));
+    reader.onload = ()=>{
+      const img = new Image();
+      img.onerror = ()=> reject(new Error('Image decode failed'));
+      img.onload = ()=>{
+        // 中心裁剪正方形后缩放到 maxSize
+        const size = Math.min(img.width, img.height);
+        const sx = (img.width - size)/2, sy = (img.height - size)/2;
+        const canvas = document.createElement('canvas');
+        canvas.width = maxSize; canvas.height = maxSize;
+        const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, sx, sy, size, size, 0, 0, maxSize, maxSize);
+        const out = file.type === 'image/png' && !file.name.toLowerCase().endsWith('.jpg')
+          ? canvas.toDataURL('image/png')
+          : canvas.toDataURL('image/jpeg', quality);
+        resolve(out);
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+/* ===== 保存 ===== */
+async function saveProfile(e){
+  e.preventDefault();
+  const msg = document.getElementById('saveMsg');
+  const btn = document.getElementById('saveBtn');
+  const fName = document.getElementById('fName');
+  const fGender = document.getElementById('fGender');
+  const fPhone = document.getElementById('fPhone');
+
+  const newName = (fName.value || '').trim().slice(0,20); // 硬上限 20 字符
+  if(!newName){
+    msg.className='msg-bar err';
+    msg.textContent = 'Name cannot be empty.';
+    return false;
+  }
+  const gender = (fGender.value || '');
+  // 收集三级联动结果 {country_code, country_name, region, city}，若无则清空 location
+  const locationPatch = collectCascade();
+  const phone = (fPhone.value || '').trim().slice(0,24);
+
+  // 构造 user_metadata 新数据，合并 avatar 变更
+  const md = { ...(currentUser.user_metadata||{}) };
+  md.name = newName;
+  md.gender = gender;
+  md.phone = phone;
+  if(locationPatch){
+    md.location = locationPatch;
+    delete md.region; // 迁移：清除旧字符串字段
+  } else {
+    delete md.location;
+  }
+  if(editAvatarData === '__REMOVE__'){
+    delete md.avatar_url;
+  } else if(typeof editAvatarData === 'string' && editAvatarData.startsWith('data:image')){
+    md.avatar_url = editAvatarData;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'SAVING…';
+  msg.className='msg-bar';
+  msg.textContent='';
+  try{
+    // 调用一次 updateUser：avatar 直接放 user_metadata，而不是走 Supabase Storage
+    await window.supabaseAuth.updateUserMetadata(md);
+    // 刷新 currentUser
+    const s = window.supabaseAuth.getAuthState();
+    if(s.user) currentUser = s.user;
+    editAvatarData = null;
+    paint();
+    showToast('Profile updated');
+    try{ localStorage.setItem('13am_auth_refresh', Date.now().toString()); }catch(_){}
+  }catch(err){
+    msg.className='msg-bar err';
+    msg.textContent = err.message || 'Save failed';
+    btn.disabled = false;
+    btn.textContent = 'SAVE';
+  }
+  return false;
+}
+
+/* ===== 轻提示 ===== */
+function showToast(text){
+  const old = document.getElementById('toast');
+  if(old) old.remove();
+  const t = document.createElement('div');
+  t.id = 'toast';
+  t.textContent = text;
+  t.style.cssText = 'position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:9999;padding:10px 24px;background:rgba(139,0,0,0.9);color:#fff;font-family:var(--serif);font-size:12px;letter-spacing:0.15em;backdrop-filter:blur(12px);animation:toastIn 0.35s ease, toastOut 0.35s ease 2.1s forwards;';
+  if(!document.getElementById('toastStyle')){
+    const s = document.createElement('style');
+    s.id='toastStyle';
+    s.textContent='@keyframes toastIn{from{opacity:0;transform:translate(-50%,-12px)}to{opacity:1;transform:translate(-50%,0)}}@keyframes toastOut{to{opacity:0;transform:translate(-50%,-12px)}}';
+    document.head.appendChild(s);
+  }
+  document.body.appendChild(t);
+  setTimeout(()=> t.remove(), 2600);
+}
+
+async function doSignOut(){
+  if(!confirm('确定退出登录？')) return;
+  try{
+    await window.supabaseAuth.signOut();
+    location.href = 'index.html';
+  }catch(e){
+    alert(e.message || 'Sign out failed');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', renderAccount);
+</script>
+</body>
+</html>

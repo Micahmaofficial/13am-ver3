@@ -212,6 +212,28 @@ body{
   color:var(--text-dim);
   font-feature-settings:"tnum";
 }
+.cart-item .qty-box{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:2px;
+  width:fit-content;
+}
+.cart-item .qty-btn{
+  width:26px;height:26px;
+  border-radius:50%;
+  border:none;background:transparent;color:var(--text-dim);
+  cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
+  font-size:16px;line-height:1;
+  transition:background 0.2s ease,color 0.2s ease;
+}
+.cart-item .qty-btn:hover{ background:rgba(0,0,0,0.05); color:var(--text); }
+.cart-item .qty-num{
+  min-width:22px;text-align:center;
+  font-size:13px;color:var(--text);font-feature-settings:"tnum";
+}
 .cart-item .price{
   font-size:15px;
   color:var(--text);
@@ -248,8 +270,7 @@ body{
   font-feature-settings:"tnum";
 }
 .checkout-btn{
-  display:block;
-  margin:32px 0 0 auto;
+  display:inline-block;
   padding:14px 40px;
   background:var(--accent);
   color:var(--bg);
@@ -259,9 +280,27 @@ body{
   letter-spacing:0.2em;
   cursor:pointer;
   transition:all 0.3s ease;
+  white-space:nowrap;
 }
 .checkout-btn:hover{
   background:var(--text);
+}
+.cart-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:12px;
+  margin-top:20px;
+  flex-wrap:wrap;
+}
+.checkout-btn.clear-btn{
+  background:transparent;
+  color:var(--text-dim);
+  border:1px solid var(--line);
+}
+.checkout-btn.clear-btn:hover{
+  color:var(--accent);
+  border-color:var(--accent);
+  background:transparent;
 }
 
 @media (max-width:768px){
@@ -270,6 +309,98 @@ body{
   .wrap{padding:100px 24px 60px}
   .cart-item{grid-template-columns:60px 1fr;gap:16px}
   .cart-item .qty,.cart-item .price,.cart-item .remove{grid-column:2}
+}
+
+/* ========== 到货预留弹窗 ========== */
+.reserve-overlay{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,0.7);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.3s ease;
+}
+.reserve-overlay.show{opacity:1;pointer-events:auto;}
+.reserve-modal{
+  width:90%;max-width:520px;max-height:85vh;overflow-y:auto;
+  background:var(--bg,#0c0c0c);border:1px solid rgba(255,255,255,0.08);
+  border-radius:4px;padding:32px 28px;
+  transform:translateY(20px);transition:transform 0.3s ease;
+}
+.reserve-overlay.show .reserve-modal{transform:translateY(0);}
+.reserve-modal h2{
+  font-family:var(--serif);font-size:1.5rem;font-weight:500;
+  margin:0 0 4px;letter-spacing:0.02em;
+}
+.reserve-modal .reserve-sub{
+  font-size:0.75rem;letter-spacing:0.1em;color:var(--text-dim);
+  margin-bottom:24px;text-transform:uppercase;
+}
+.reserve-summary{
+  border:1px solid rgba(255,255,255,0.06);border-radius:4px;
+  padding:12px 16px;margin-bottom:20px;
+}
+.reserve-summary .rs-item{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:6px 0;font-size:0.85rem;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+}
+.reserve-summary .rs-item:last-child{border-bottom:none;}
+.reserve-summary .rs-name{flex:1;}
+.reserve-summary .rs-meta{color:var(--text-dim);font-size:0.75rem;margin-left:8px;}
+.reserve-summary .rs-qty{color:var(--text-dim);margin-left:12px;}
+.reserve-field{margin-bottom:16px;}
+.reserve-field label{
+  display:block;font-size:0.7rem;letter-spacing:0.1em;
+  color:var(--text-dim);margin-bottom:6px;text-transform:uppercase;
+}
+.reserve-field input,.reserve-field textarea{
+  width:100%;background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.1);border-radius:3px;
+  padding:10px 12px;color:var(--text);font-family:inherit;font-size:0.9rem;
+  outline:none;transition:border-color 0.2s;
+}
+.reserve-field input:focus,.reserve-field textarea:focus{
+  border-color:rgba(255,255,255,0.25);
+}
+.reserve-field textarea{resize:vertical;min-height:60px;}
+.reserve-actions{
+  display:flex;gap:12px;margin-top:24px;
+}
+.reserve-actions button{
+  flex:1;padding:12px;border:none;border-radius:3px;
+  font-family:var(--serif);font-size:0.85rem;letter-spacing:0.05em;
+  cursor:pointer;transition:opacity 0.2s;
+}
+.reserve-actions .btn-cancel{
+  background:transparent;border:1px solid rgba(255,255,255,0.15);
+  color:var(--text-dim);
+}
+.reserve-actions .btn-cancel:hover{color:var(--text);}
+.reserve-actions .btn-submit{
+  background:var(--text,#fff);color:var(--bg,#0c0c0c);font-weight:500;
+}
+.reserve-actions .btn-submit:hover{opacity:0.85;}
+.reserve-actions .btn-submit:disabled{opacity:0.4;cursor:not-allowed;}
+.reserve-success{
+  text-align:center;padding:20px 0;
+}
+.reserve-success .check{
+  width:48px;height:48px;margin:0 auto 16px;
+  border-radius:50%;border:1px solid var(--text);
+  display:flex;align-items:center;justify-content:center;
+}
+.reserve-success .check svg{width:24px;height:24px;stroke:var(--text);fill:none;stroke-width:2;}
+.reserve-success h3{
+  font-family:var(--serif);font-size:1.2rem;font-weight:500;
+  margin:0 0 8px;
+}
+.reserve-success p{
+  font-size:0.8rem;color:var(--text-dim);margin:0 0 24px;
+  line-height:1.6;
+}
+@media(max-width:520px){
+  .reserve-modal{padding:24px 20px;}
+  .reserve-actions{flex-direction:column;}
 }
 </style>
 </head>
@@ -307,18 +438,18 @@ body{
   <div class="cart-total" id="cartTotal">
     <span class="label">SUBTOTAL</span>
     <span class="amount" id="totalAmount">¥ 0</span>
-    <button class="checkout-btn" onclick="checkout()">CHECKOUT</button>
+    <div class="cart-actions">
+      <button class="checkout-btn clear-btn" type="button" onclick="clearAllCart()">CLEAR ALL</button>
+      <button class="checkout-btn" onclick="openReserve()">RESERVE</button>
+    </div>
   </div>
 </div>
 
+<script src="assets/js/supabase.js"></script>
+<script src="assets/js/cart.js"></script>
 <script>
-// 购物车数据（暂存 localStorage）
-const CART_KEY = '13am_cart';
-let cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+// 购物车数据统一走 window.Cart
 let products = {};  // 从 products.json 加载
-
-function getCart(){ return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); }
-function saveCart(c){ localStorage.setItem(CART_KEY, JSON.stringify(c)); cart = c; }
 
 async function loadProducts(){
   try{
@@ -356,6 +487,7 @@ function render(){
   const total = document.getElementById('cartTotal');
   const empty = document.getElementById('emptyState');
   const label = document.getElementById('countLabel');
+  const cart = window.Cart.getCart();
 
   if(cart.length === 0){
     list.style.display = 'none';
@@ -386,9 +518,13 @@ function render(){
         <div class="name">${p.name}</div>
         <div class="tag">— ${p.tag}${item.size ? ' · SIZE ' + item.size : ''}</div>
       </div>
-      <div class="qty">× ${item.qty}</div>
+      <div class="qty-box">
+        <button class="qty-btn" onclick="changeQty(${idx}, -1)">−</button>
+        <span class="qty-num">${item.qty}</span>
+        <button class="qty-btn" onclick="changeQty(${idx}, 1)">+</button>
+      </div>
       <div class="price">${priceStr}</div>
-      <button class="remove" onclick="removeItem(${idx})">REMOVE</button>
+      <button class="remove" onclick="removeAt(${idx})">REMOVE</button>
     </div>`;
   }).join('');
 
@@ -397,64 +533,232 @@ function render(){
     : '¥ TBA';
 }
 
-function removeItem(idx){
-  const c = getCart();
-  c.splice(idx, 1);
-  saveCart(c);
-  render();
-}
-
-function checkout(){
-  alert('Checkout flow — coming soon.');
-}
-
-// 暴露给详情页/主页用（同步 size 字段）
-window.addToCart = function(id, opts){
-  const size = (opts && opts.size) || null;
-  const qty  = (opts && opts.qty) || 1;
-  const c = getCart();
-  const key = id + (size ? '::' + size : '');
-  const existing = c.find(i => (i.id + (i.size ? '::' + i.size : '')) === key);
-  if(existing) existing.qty += qty;
-  else c.push({id, size, qty});
-  saveCart(c);
+window.changeQty = function(idx, delta){
+  if(!window.Cart) return;
+  window.Cart.updateQtyAt(idx, delta);
+};
+window.removeAt = function(idx){
+  if(!window.Cart) return;
+  window.Cart.removeAt(idx);
+};
+window.clearAllCart = function(){
+  if(!window.Cart) return;
+  if(!confirm('Clear all items in cart?')) return;
+  window.Cart.clearCart();
 };
 
-// 跨页/返回时刷新
-window.addEventListener('storage', e=>{
-  if(e.key === CART_KEY){ cart = getCart(); render(); }
-});
-window.addEventListener('pageshow', e=>{
-  if(e.persisted){ cart = getCart(); render(); }
-});
-document.addEventListener('visibilitychange', ()=>{
-  if(!document.hidden){ cart = getCart(); render(); }
-});
+// 兼容 product.html / index.html 老页面通过 window.addToCart 跨页调（现在内部走 Cart.addToCart）
+window.addToCart = function(id, opts){
+  if(!window.Cart) return null;
+  return window.Cart.addToCart(id, opts || {});
+};
 
-// 启动：加载映射 -> 渲染
+function checkout(){
+  openReserve();
+}
+
+/* ========== 到货预留弹窗 ========== */
+function openReserve(){
+  const cart = window.Cart.getCart();
+  if(!cart || cart.length === 0) return;
+
+  // 如果已登录，预填用户名
+  let preName = '';
+  if(window.supabaseAuth){
+    const st = window.supabaseAuth.getAuthState();
+    if(st.loggedIn && st.user){
+      preName = st.user.user_metadata?.name || st.user.email?.split('@')[0] || '';
+    }
+  }
+
+  // 构建摘要
+  const summaryHtml = cart.map(item=>{
+    const p = products[item.id];
+    if(!p) return '';
+    const meta = [item.size && 'SIZE ' + item.size, p.tag].filter(Boolean).join(' · ');
+    return `<div class="rs-item">
+      <span class="rs-name">${p.name}<span class="rs-meta">${meta}</span></span>
+      <span class="rs-qty">×${item.qty}</span>
+    </div>`;
+  }).join('');
+
+  const html = `<div class="reserve-modal" id="reserveModal">
+    <h2>到货预留</h2>
+    <div class="reserve-sub">RESERVE · 我们会在商品到货后第一时间联系你</div>
+    <div class="reserve-summary">${summaryHtml}</div>
+    <div class="reserve-field">
+      <label>姓名 / NAME</label>
+      <input type="text" id="rvName" value="${preName.replace(/"/g,'&quot;')}" placeholder="你的称呼" maxlength="20">
+    </div>
+    <div class="reserve-field">
+      <label>联系方式 / CONTACT</label>
+      <input type="text" id="rvContact" placeholder="手机号 / 微信 / 邮箱" maxlength="40">
+    </div>
+    <div class="reserve-field">
+      <label>备注 / NOTE（可选）</label>
+      <textarea id="rvNote" placeholder="尺码偏好、到货时间要求等" maxlength="200"></textarea>
+    </div>
+    <div class="reserve-actions">
+      <button class="btn-cancel" onclick="closeReserve()">CANCEL</button>
+      <button class="btn-submit" id="rvSubmit" onclick="submitReserve()">SUBMIT</button>
+    </div>
+  </div>`;
+
+  let overlay = document.getElementById('reserveOverlay');
+  if(!overlay){
+    overlay = document.createElement('div');
+    overlay.id = 'reserveOverlay';
+    overlay.className = 'reserve-overlay';
+    document.body.appendChild(overlay);
+  }
+  overlay.innerHTML = html;
+  overlay.classList.add('show');
+  overlay.addEventListener('click', function(e){
+    if(e.target === overlay) closeReserve();
+  });
+  // 自动聚焦
+  setTimeout(()=>{
+    const n = document.getElementById('rvName');
+    if(n && !n.value) n.focus();
+  }, 300);
+}
+
+function closeReserve(){
+  const overlay = document.getElementById('reserveOverlay');
+  if(overlay) overlay.classList.remove('show');
+}
+
+function submitReserve(){
+  const name = (document.getElementById('rvName')?.value || '').trim();
+  const contact = (document.getElementById('rvContact')?.value || '').trim();
+  const note = (document.getElementById('rvNote')?.value || '').trim();
+  if(!name){ document.getElementById('rvName').focus(); return; }
+  if(!contact){ document.getElementById('rvContact').focus(); return; }
+
+  const btn = document.getElementById('rvSubmit');
+  if(btn) btn.disabled = true;
+
+  const cart = window.Cart.getCart();
+  const reservation = {
+    id: 'rv_' + Date.now(),
+    name, contact, note,
+    items: cart.map(i=>({ id:i.id, name:products[i.id]?.name||i.id, size:i.size||'', qty:i.qty })),
+    created_at: new Date().toISOString()
+  };
+
+  // 存到 localStorage
+  try{
+    const list = JSON.parse(localStorage.getItem('13am_reservations') || '[]');
+    list.push(reservation);
+    localStorage.setItem('13am_reservations', JSON.stringify(list));
+  }catch(e){ console.warn('预留保存失败', e); }
+
+  // 如果已登录，同步到 Supabase user_metadata.reservations
+  if(window.supabaseAuth){
+    const st = window.supabaseAuth.getAuthState();
+    if(st.loggedIn && window.supabaseAuth.updateUserMetadata){
+      const existing = st.user.user_metadata?.reservations || [];
+      existing.push(reservation);
+      window.supabaseAuth.updateUserMetadata({ reservations: existing }).catch(()=>{});
+    }
+  }
+
+  // 显示成功页
+  const overlay = document.getElementById('reserveOverlay');
+  if(overlay){
+    overlay.querySelector('.reserve-modal').innerHTML = `
+      <div class="reserve-success">
+        <div class="check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
+        <h3>预留成功</h3>
+        <p>我们会在商品到货后通过你留下的联系方式第一时间通知你。<br>RESERVATION CONFIRMED.</p>
+        <div class="reserve-actions">
+          <button class="btn-submit" style="flex:1" onclick="closeReserve(); window.Cart.clearCart();">DONE</button>
+        </div>
+      </div>`;
+  }
+}
+
+// 启动：加载映射 -> 订阅购物车变更 -> 首次渲染
 loadProducts().then(m=>{
   products = m;
   render();
+  // 订阅所有购物车变更（本页操作/跨 tab storage/登录合并/云端写回）自动重渲染
+  if(window.Cart){
+    window.Cart.onCartChange(()=> render());
+  }
 });
 </script>
-<script src="assets/js/supabase.js"></script>
-<script>
-(async function(){
-  if(!window.supabaseAuth) return;
-  await window.supabaseAuth.initSupabase();
-  const state = window.supabaseAuth.getAuthState();
-  const badge = document.createElement('div');
-  badge.id = 'authBadge';
-  badge.style.cssText = 'position:fixed;top:20px;right:24px;z-index:100;font-size:12px;letter-spacing:0.1em;color:var(--text-dim);cursor:pointer;font-family:var(--serif);';
-  if(state.loggedIn && state.user){
-    const name = state.user.user_metadata?.name || state.user.email?.split('@')[0] || '';
-    badge.textContent = name + ' · 退出';
-    badge.onclick = ()=>{ if(confirm('退出登录？')){ window.supabaseAuth.signOut().then(()=>location.reload()); } };
-  } else {
-    badge.textContent = 'LOG IN';
-    badge.onclick = ()=>{ location.href = 'login.html?redirect=' + encodeURIComponent(location.pathname + location.search); };
+<style>
+  #authBadge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:2px 8px 2px 2px;
+    border-radius:999px;
+    background:rgba(255,255,255,0.02);
   }
-  document.body.appendChild(badge);
+  #authBadge .ab-avatar{
+    width:24px;height:24px;border-radius:50%;overflow:hidden;flex-shrink:0;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:rgba(0,0,0,0.04);color:var(--text-dim);
+  }
+  #authBadge .ab-avatar svg{
+    width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
+  }
+  #authBadge .ab-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+  #authBadge .ab-avatar .ab-fb{
+    width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,#2a3a8a,#4a5fc8);color:#fff;
+    font-family:'Fraunces',serif;font-size:11px;font-weight:500;letter-spacing:0;
+  }
+  #authBadge .ab-text{
+    display:inline-block;
+    max-width:120px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    vertical-align:middle;
+    line-height:1.2;
+  }
+</style>
+<script>
+(function(){
+  function esc(s){ return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  const DEFAULT_SVG = '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>';
+  function renderAuthBadge(state){
+    let badge = document.getElementById('authBadge');
+    if(!badge){
+      badge = document.createElement('div');
+      badge.id = 'authBadge';
+      badge.style.cssText = 'position:fixed;top:20px;right:24px;z-index:100;font-size:12px;letter-spacing:0.1em;color:var(--text-dim);cursor:pointer;font-family:var(--serif);transition:color 0.3s ease,transform 0.3s ease;';
+      badge.onmouseenter = ()=>{ badge.style.color = 'var(--text)'; badge.style.transform='translateY(-1px)'; };
+      badge.onmouseleave = ()=>{ badge.style.color = 'var(--text-dim)'; badge.style.transform='translateY(0)'; };
+      document.body.appendChild(badge);
+    }
+    if(state.loggedIn && state.user){
+      const md = state.user.user_metadata || {};
+      const fullName = md.name || state.user.email?.split('@')[0] || 'USER';
+      const shortName = fullName.length > 12 ? fullName.slice(0,12) + '…' : fullName;
+      const initials = (fullName.trim().slice(0,1)||'U').toUpperCase();
+      const avatarUrl = md.avatar_url || '';
+      const avHtml = avatarUrl
+        ? `<img src="${esc(avatarUrl)}" alt="${esc(fullName)}">`
+        : `<span class="ab-fb">${esc(initials)}</span>`;
+      badge.innerHTML = `<span class="ab-avatar">${avHtml}</span><span class="ab-text" title="${esc(fullName)}">${esc(shortName)}</span>`;
+      badge.title = fullName + ' · 我的账户';
+      badge.onclick = ()=> location.href = 'account.html';
+    } else {
+      badge.innerHTML = `<span class="ab-avatar">${DEFAULT_SVG}</span><span class="ab-text">LOG IN</span>`;
+      badge.title = '登录 / 注册';
+      badge.onclick = ()=>{ location.href = 'login.html?redirect=' + encodeURIComponent(location.pathname + location.search); };
+    }
+  }
+  (async function(){
+    if(!window.supabaseAuth) return;
+    await window.supabaseAuth.initSupabase();
+    renderAuthBadge(window.supabaseAuth.getAuthState());
+    window.supabaseAuth.onAuthStateChange(()=> renderAuthBadge(window.supabaseAuth.getAuthState()));
+  })();
 })();
 </script>
 </body>

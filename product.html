@@ -49,10 +49,6 @@ body{
   overflow:visible;
 }
 .back-btn{
-  position:absolute;
-  left:48px;
-  top:50%;
-  transform:translateY(-50%);
   background:none;
   border:none;
   color:var(--text-dim);
@@ -65,18 +61,17 @@ body{
   align-items:center;
   gap:8px;
   transition:color 0.3s ease;
+  flex-shrink:0;
 }
 .back-btn:hover{color:var(--text)}
 .back-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
-.topbar-title{
-  position:absolute;
-  right:48px;
-  top:50%;
-  transform:translateY(-50%);
-  font-size:13px;
-  letter-spacing:0.25em;
-  color:var(--text-dim);
-  font-weight:300;
+.topbar-right{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  flex:1;
+  min-width:0;
+  padding-left:12px;
 }
 .topbar-logo{
   position:absolute;
@@ -229,6 +224,15 @@ body{
   max-width:340px;
 }
 .size-grid.hidden{display:none}
+.size-grid.prompt{
+  animation: sizePrompt 1.4s ease 2;
+}
+@keyframes sizePrompt{
+  0%   { box-shadow: 0 0 0 0 rgba(229, 77, 66, 0); }
+  20%  { box-shadow: 0 0 0 6px rgba(229, 77, 66, 0.18); border-radius: 14px; }
+  45%  { box-shadow: 0 0 0 10px rgba(229, 77, 66, 0); border-radius: 14px; }
+  100% { box-shadow: 0 0 0 0 rgba(229, 77, 66, 0); }
+}
 .size-btn{
   background:none;
   border:1px solid var(--line);
@@ -403,8 +407,7 @@ body{
 }
 @media (max-width:768px){
   .topbar{padding:0 20px}
-  .back-btn{left:20px;font-size:12px}
-  .topbar-title{right:20px;font-size:12px}
+  .back-btn{font-size:12px}
   .topbar-logo img{height:32px}
   .wrap{padding:80px 20px 50px}
   .info-name{font-size:38px}
@@ -416,8 +419,9 @@ body{
 }
 @media (max-width:480px){
   .topbar{padding:0 16px}
-  .back-btn{left:16px;font-size:11px}
-  .topbar-title{right:16px;font-size:11px}
+  .back-btn{font-size:11px}
+  .topbar-right{padding-left:8px}
+  #authBadge .ab-text{max-width:80px}
   .topbar-logo img{height:28px}
   .wrap{padding:70px 16px 40px}
   .info-name{font-size:30px}
@@ -441,7 +445,7 @@ body{
   <div class="topbar-logo" onclick="location.href='index.html'">
     <img src="assets/logo-13am.png" alt="13AM">
   </div>
-  <span class="topbar-title">PRODUCT</span>
+  <div id="topbarRight" class="topbar-right"></div>
 </nav>
 
 <div class="wrap" id="app">
@@ -449,7 +453,7 @@ body{
 </div>
 
 <script>
-const CART_KEY = '13am_cart';
+// 购物车：统一通过 window.Cart
 let currentProduct = null;
 let currentImage = 0;
 let selectedSize = null;
@@ -458,15 +462,6 @@ let qty = 1;
 function getParam(name){
   const m = new URLSearchParams(location.search).get(name);
   return m ? m.trim() : null;
-}
-
-function getCart(){
-  return JSON.parse(localStorage.getItem(CART_KEY) || '[]');
-}
-function setCart(cart){
-  localStorage.setItem(CART_KEY, JSON.stringify(cart));
-  // 通知其他页面
-  try{window.dispatchEvent(new CustomEvent('cart-updated'));}catch(e){}
 }
 
 async function loadProducts(){
@@ -579,6 +574,29 @@ function renderProduct(p){
       ${renderInfo(p)}
     </div>
   `;
+  // 从卡片跳转进入，提示必须先选尺码
+  if(getParam('promptSize') === '1'){
+    const needsSize = p.category === 'clothing' || p.category === 'pants';
+    const hasSizeOptions = Array.isArray(p.sizes) && p.sizes.length > 0;
+    if(needsSize && hasSizeOptions){
+      const grid = document.querySelector('.size-grid');
+      if(grid){
+        // 下一帧再加动画，确保浏览器已完成首次布局
+        requestAnimationFrame(()=>{
+          grid.classList.add('prompt');
+          setTimeout(()=> grid.classList.remove('prompt'), 1.4*2*1000 + 60);
+        });
+        // 同时滚动到尺码区，让移动端也一眼看到（若尺码在视口内则不跳）
+        setTimeout(()=>{
+          if(!grid) return;
+          const rect = grid.getBoundingClientRect();
+          if(rect.top < 60 || rect.bottom > window.innerHeight - 20){
+            grid.scrollIntoView({behavior:'smooth', block:'center'});
+          }
+        }, 160);
+      }
+    }
+  }
 }
 
 function setImage(i){
@@ -632,15 +650,8 @@ function doAddToCart(){
     }
     return;
   }
-  const cart = getCart();
-  const key = currentProduct.id + (selectedSize ? '::' + selectedSize : '');
-  const existing = cart.find(c => (c.id + (c.size?'::'+c.size:'')) === key);
-  if(existing){
-    existing.qty += qty;
-  } else {
-    cart.push({id:currentProduct.id, size:selectedSize||null, qty:qty});
-  }
-  setCart(cart);
+  if(!window.Cart) return;
+  window.Cart.addToCart(currentProduct.id, { size: selectedSize || null, qty: qty });
   const btn = document.getElementById('addBtn');
   if(btn){
     btn.classList.add('added');
@@ -667,23 +678,82 @@ function doAddToCart(){
 })();
 </script>
 <script src="assets/js/supabase.js"></script>
-<script>
-(async function(){
-  if(!window.supabaseAuth) return;
-  await window.supabaseAuth.initSupabase();
-  const state = window.supabaseAuth.getAuthState();
-  const badge = document.createElement('div');
-  badge.id = 'authBadge';
-  badge.style.cssText = 'position:fixed;top:20px;right:24px;z-index:100;font-size:12px;letter-spacing:0.1em;color:var(--text-dim);cursor:pointer;font-family:var(--serif);';
-  if(state.loggedIn && state.user){
-    const name = state.user.user_metadata?.name || state.user.email?.split('@')[0] || '';
-    badge.textContent = name + ' · 退出';
-    badge.onclick = ()=>{ if(confirm('退出登录？')){ window.supabaseAuth.signOut().then(()=>location.reload()); } };
-  } else {
-    badge.textContent = 'LOG IN';
-    badge.onclick = ()=>{ location.href = 'login.html?redirect=' + encodeURIComponent(location.pathname + location.search); };
+<script src="assets/js/cart.js"></script>
+<style>
+  #authBadge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:2px 8px 2px 2px;
+    border-radius:999px;
+    background:rgba(255,255,255,0.02);
   }
-  document.body.appendChild(badge);
+  #authBadge .ab-avatar{
+    width:24px;height:24px;border-radius:50%;overflow:hidden;flex-shrink:0;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:rgba(0,0,0,0.04);color:var(--text-dim);
+  }
+  #authBadge .ab-avatar svg{
+    width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
+  }
+  #authBadge .ab-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+  #authBadge .ab-avatar .ab-fb{
+    width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,#2a3a8a,#4a5fc8);color:#fff;
+    font-family:'Fraunces',serif;font-size:11px;font-weight:500;letter-spacing:0;
+  }
+  #authBadge .ab-text{
+    display:inline-block;
+    max-width:120px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    vertical-align:middle;
+    line-height:1.2;
+  }
+</style>
+<script>
+(function(){
+  function esc(s){ return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  const DEFAULT_SVG = '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>';
+  function mountBadge(){
+    const host = document.getElementById('topbarRight');
+    if(!host) return null;
+    let badge = document.getElementById('authBadge');
+    if(!badge){
+      badge = document.createElement('div');
+      badge.id = 'authBadge';
+      host.appendChild(badge);
+    }
+    return badge;
+  }
+  function renderAuthBadge(state){
+    const badge = mountBadge();
+    if(!badge) return;
+    if(state.loggedIn && state.user){
+      const md = state.user.user_metadata || {};
+      const fullName = md.name || state.user.email?.split('@')[0] || 'USER';
+      const shortName = fullName.length > 12 ? fullName.slice(0,12) + '…' : fullName;
+      const initials = (fullName.trim().slice(0,1)||'U').toUpperCase();
+      const avatarUrl = md.avatar_url || '';
+      const avHtml = avatarUrl
+        ? `<img src="${esc(avatarUrl)}" alt="${esc(fullName)}">`
+        : `<span class="ab-fb">${esc(initials)}</span>`;
+      badge.innerHTML = `<span class="ab-avatar">${avHtml}</span><span class="ab-text" title="${esc(fullName)}">${esc(shortName)}</span>`;
+      badge.title = fullName + ' · 我的账户';
+      badge.onclick = ()=> location.href = 'account.html';
+    } else {
+      badge.innerHTML = `<span class="ab-avatar">${DEFAULT_SVG}</span><span class="ab-text">LOG IN</span>`;
+      badge.title = '登录 / 注册';
+      badge.onclick = ()=>{ location.href = 'login.html?redirect=' + encodeURIComponent(location.pathname + location.search); };
+    }
+  }
+  (async function(){
+    if(!window.supabaseAuth) return;
+    await window.supabaseAuth.initSupabase();
+    renderAuthBadge(window.supabaseAuth.getAuthState());
+    window.supabaseAuth.onAuthStateChange(()=> renderAuthBadge(window.supabaseAuth.getAuthState()));
+  })();
 })();
 </script>
 </body>
